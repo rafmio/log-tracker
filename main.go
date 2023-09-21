@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-var SrcFileName string = "ufw.log"
+var SrcFileName string = "ufw-1-line.log"
 
 type Log struct {
 	Date      time.Time
@@ -32,6 +32,8 @@ func main() {
 		fmt.Println("the src file has been read")
 	}
 
-	err = ParseSrcData(srcData, &logs) // pass the read data and tmp storage for parsing
+	ParseSrcData(srcData, &logs) // pass the read data and tmp storage for parsing
 
+	fmt.Println(logs[0].Date, logs[0].HMtime)
+	srcData.Close()
 }
