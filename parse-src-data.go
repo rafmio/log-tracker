@@ -116,3 +116,8 @@ func ParseSrcData(srcData *os.File, logs *[]Log) {
 		*logs = append(*logs, log)
 	}
 }
+
+/*
+TODO: Combine the monotonous parsing operations of each token
+into a separate function for better readability and convenient maintenance
+*/
