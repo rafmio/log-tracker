@@ -37,6 +37,30 @@ func ParseSrcData(srcData *os.File, logs *[]Log) {
 			log.Date = date
 		}
 
+		/*
+			Approximately from the 11th column (SRC=), the number of columns may vary,
+			for example, the column 'DF=' may appear. For this reason, we cannot hardcode
+			a static algorithm - the column number (i.e. the number of the slice element
+			tokens[] may differ)
+		*/
+
+		// declare an array of prefixes for further iteration
+
+		//TODO: нужно перебрать каждый элемент tokens на предмет соответствия prefixes
+		prifixes := []string{
+			"SRC=",
+			"LEN=",
+			"TTL=",
+			"ID=",
+			"SPT=",
+			"DPT=",
+			"WINDOW",
+		}
+
+		for i := 11; i < len(tokens); i++ {
+
+		}
+
 		// tokens[11] is the IP-address
 		if strings.Index(tokens[11], "SRC=") != -1 { // check if tokens[10] contains "SRC="
 			ip := strings.TrimPrefix(tokens[11], "SRC=") // if true - trim it
