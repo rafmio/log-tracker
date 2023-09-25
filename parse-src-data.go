@@ -10,8 +10,9 @@ import (
 	"time"
 )
 
-func ParseSrcData(srcData *os.File, logs *[]Log) {
-
+func ParseSrcData(srcData *os.File, logs *[]Log) error {
+	var counter int = 0
+	var err error = nil
 	// create a scanner for text processing
 	scanner := bufio.NewScanner(srcData)
 	for scanner.Scan() {
@@ -20,6 +21,11 @@ func ParseSrcData(srcData *os.File, logs *[]Log) {
 
 		// saving the log-line to a variable
 		logLine := scanner.Text()
+
+		if err := scanner.Err(); err != nil {
+			fmt.Println("Error:", err.Error())
+			return err
+		}
 
 		// splitting the string into tokens
 		tokens := strings.Fields(logLine)
@@ -33,115 +39,82 @@ func ParseSrcData(srcData *os.File, logs *[]Log) {
 		date, err := time.Parse("02 Jan 2006 15:04:05", dateStr)
 		if err != nil {
 			fmt.Println("time.Parse(dateStr):", err.Error())
+			return err
 		} else {
 			log.Date = date
 		}
 
-		/*
-			Approximately from the 11th column (SRC=), the number of columns may vary,
-			for example, the column 'DF=' may appear. For this reason, we cannot hardcode
-			a static algorithm - the column number (i.e. the number of the slice element
-			tokens[] may differ)
-		*/
-
-		// declare an array of prefixes for further iteration
-
-		//TODO: нужно перебрать каждый элемент tokens на предмет соответствия prefixes
-		prifixes := []string{
-			"SRC=",
-			"LEN=",
-			"TTL=",
-			"ID=",
-			"SPT=",
-			"DPT=",
-			"WINDOW",
+		// declare a map of prefixes
+		prefixesMap := map[string]string{
+			"SRC":    "",
+			"LEN":    "",
+			"TTL":    "",
+			"ID":     "",
+			"SPT":    "",
+			"DPT":    "",
+			"WINDOW": "",
 		}
 
-		for i := 11; i < len(tokens); i++ {
-
-		}
-
-		// tokens[11] is the IP-address
-		if strings.Index(tokens[11], "SRC=") != -1 { // check if tokens[10] contains "SRC="
-			ip := strings.TrimPrefix(tokens[11], "SRC=") // if true - trim it
-			log.SrcIP = net.ParseIP(ip)                  // initialize SrcIP field with ip converted to net.IP
-		} else {
-			fmt.Println("Can't parse IP")
-		}
-
-		// tokens[13] is the length of the packet
-		if strings.Index(tokens[13], "LEN=") != -1 { // check if tokens[13] contiains "LEN="
-			len := strings.TrimPrefix(tokens[13], "LEN=") // if true - trim it
-			log.PacketLen, err = strconv.Atoi(len)        // initialize PacketLen with it converted to int
-			if err != nil {
-				fmt.Println("Can't convert string to int", err.Error())
+		// iterate over the slice starting from the 12th element
+		for i := 10; i < len(tokens); i++ {
+			// divide an element of type "LEN=40"
+			// into two elements with a separator "="
+			prefixValue := strings.Split(tokens[i], "=")
+			_, ok := prefixesMap[prefixValue[0]] // check if the key exists
+			if ok {
+				// if key exists - fill appropriate value
+				prefixesMap[prefixValue[0]] = prefixValue[1]
+			} else {
+				continue
 			}
-		} else {
-			fmt.Println("Can't parse LEN=")
 		}
 
-		// tokens[16] is the packet's TTL (Ttl)
-		if strings.Index(tokens[16], "TTL=") != -1 { // check if tokens[16] contains "TTL="
-			ttl := strings.TrimPrefix(tokens[16], "TTL=") // if true - trim it
-			log.Ttl, err = strconv.Atoi(ttl)              // initialize Ttl with converted to int
+		log.SrcIP = net.ParseIP(prefixesMap["SRC"])
+
+		log.PacketLen, err = strconv.Atoi(prefixesMap["LEN"])
+		if err != nil {
+			fmt.Println("converting string LEN to int")
+			fmt.Println("counter: ", counter)
+			return err
+		}
+
+		log.Ttl, err = strconv.Atoi(prefixesMap["TTL"])
+		if err != nil {
+			fmt.Println("converting string TTL to int")
+			return err
+		}
+
+		log.PacketId, err = strconv.Atoi(prefixesMap["ID"])
+		if err != nil {
+			fmt.Println("converting string ID to int")
+			return err
+		}
+
+		log.SrcPort, err = strconv.Atoi(prefixesMap["SPT"])
+		if err != nil {
+			fmt.Println("converting string SPT to int")
+			return err
+		}
+
+		log.DptPort, err = strconv.Atoi(prefixesMap["DPT"])
+		if err != nil {
+			fmt.Println("converting string DPT to int")
+			return err
+		}
+
+		if prefixesMap["WINDOW"] == "" {
+			log.Window = 0
+		} else {
+			log.Window, err = strconv.Atoi(prefixesMap["WINDOW"])
 			if err != nil {
-				fmt.Println("Can't convert string go int", err.Error())
+				fmt.Println("converting string WINDOW to int")
+				return err
 			}
-		} else {
-			fmt.Println("Can't parse TTL=")
-		}
-
-		// tokens[17] is the packet's ID (PacketID)
-		if strings.Index(tokens[17], "ID=") != -1 {
-			id := strings.TrimPrefix(tokens[17], "ID=")
-			log.PacketId, err = strconv.Atoi(id)
-			if err != nil {
-				fmt.Println("Can't convert string to int")
-			}
-		} else {
-			fmt.Println("Can't parse ID=")
-		}
-
-		// tokens[19] is the source port (SrcPort)
-		if strings.Index(tokens[19], "SPT=") != -1 {
-			spt := strings.TrimPrefix(tokens[19], "SPT=")
-			log.SrcPort, err = strconv.Atoi(spt)
-			if err != nil {
-				fmt.Println("Can't convert string to int")
-			}
-		} else {
-			fmt.Println("Can't parse SPT=")
-		}
-
-		if strings.Index(tokens[20], "DPT=") != -1 {
-			dst := strings.TrimPrefix(tokens[20], "DPT=")
-			log.DstPort, err = strconv.Atoi(dst)
-			if err != nil {
-				fmt.Println("Can't convert string to int")
-			}
-		} else {
-			fmt.Println("Can't parse DPT=")
-		}
-
-		if strings.Index(tokens[21], "WINDOW=") != -1 {
-			window := strings.TrimPrefix(tokens[21], "WINDOW=")
-			log.Window, err = strconv.Atoi(window)
-			if err != nil {
-				fmt.Println("Can't convert string to int")
-			}
-		} else {
-			fmt.Println("Can't parse WINDOW=")
-		}
-
-		if err := scanner.Err(); err != nil {
-			fmt.Println("Error:", err.Error())
 		}
 
 		*logs = append(*logs, log)
 	}
-}
 
-/*
-TODO: Combine the monotonous parsing operations of each token
-into a separate function for better readability and convenient maintenance
-*/
+	counter++
+	return err
+}
