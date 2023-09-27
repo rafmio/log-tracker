@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net"
 	"os"
 	"time"
@@ -9,6 +10,22 @@ import (
 
 // var SrcFileName string = "ufw-1-line.log"
 var SrcFileName string = "ufw.log"
+
+// set log-file path and set golbal log-file var for the application
+var logFilePath string = "logfile.log"
+var LogFile *os.File
+
+// set log-file settings
+func init() {
+	LogFile, err := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatal("ERROR: opening log-file")
+	} else {
+		log.SetOutput(LogFile)
+		log.SetFlags(log.LstdFlags)
+		log.Println("INFO: log file has been opened")
+	}
+}
 
 type Log struct {
 	Date      time.Time
@@ -22,19 +39,20 @@ type Log struct {
 }
 
 func main() {
+	defer LogFile.Close()
+
 	logs := make([]Log, 0) // create slice for store parsed log structs
 
 	srcData, err := os.OpenFile(SrcFileName, os.O_RDONLY, 0) // open source file
 	if err != nil {
-		fmt.Println("reading src file:", err.Error)
-		os.Exit(1)
+		log.Fatal("ERROR: opening src file")
 	} else {
-		fmt.Println("the src file has been read")
+		log.Println("INFO: the src file has been read")
 	}
 
 	err = ParseSrcData(srcData, &logs) // pass the read data and tmp storage for parsing
 	if err != nil {
-		fmt.Println("main(): Error:", err.Error())
+		fmt.Println("ERROR: main()", err.Error())
 	}
 
 	fmt.Println(

@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"net"
 	"os"
 	"strconv"
@@ -11,24 +12,24 @@ import (
 )
 
 func ParseSrcData(srcData *os.File, logs *[]Log) error {
-	var counter int = 0
 	var err error = nil
+
 	// create a scanner for text processing
 	scanner := bufio.NewScanner(srcData)
 	for scanner.Scan() {
 		// declaring the log structure to fill in the fields
-		var log Log
+		var logLine Log
 
 		// saving the log-line to a variable
-		logLine := scanner.Text()
+		logLineStr := scanner.Text()
 
 		if err := scanner.Err(); err != nil {
-			fmt.Println("Error:", err.Error())
+			log.Println("ERROR: scanner", err.Error())
 			return err
 		}
 
 		// splitting the string into tokens
-		tokens := strings.Fields(logLine)
+		tokens := strings.Fields(logLineStr)
 
 		// tokens[0] is a month and tokens[1] is a day. Add year
 		dateStr := tokens[1] + " " + tokens[0] + " " + strconv.Itoa(time.Now().Year())
@@ -38,10 +39,10 @@ func ParseSrcData(srcData *os.File, logs *[]Log) error {
 		// initialize the Date field of the log structure by parsed date
 		date, err := time.Parse("02 Jan 2006 15:04:05", dateStr)
 		if err != nil {
-			fmt.Println("time.Parse(dateStr):", err.Error())
+			log.Println("ERROR: time.Parse(dateStr)", err.Error())
 			return err
 		} else {
-			log.Date = date
+			logLine.Date = date
 		}
 
 		// declare a map of prefixes
@@ -69,52 +70,73 @@ func ParseSrcData(srcData *os.File, logs *[]Log) error {
 			}
 		}
 
-		log.SrcIP = net.ParseIP(prefixesMap["SRC"])
+		// filling in the structure fields
+		logLine.SrcIP = net.ParseIP(prefixesMap["SRC"])
 
-		log.PacketLen, err = strconv.Atoi(prefixesMap["LEN"])
-		if err != nil {
-			fmt.Println("converting string LEN to int")
-			fmt.Println("counter: ", counter)
-			return err
-		}
-
-		log.Ttl, err = strconv.Atoi(prefixesMap["TTL"])
-		if err != nil {
-			fmt.Println("converting string TTL to int")
-			return err
-		}
-
-		log.PacketId, err = strconv.Atoi(prefixesMap["ID"])
-		if err != nil {
-			fmt.Println("converting string ID to int")
-			return err
-		}
-
-		log.SrcPort, err = strconv.Atoi(prefixesMap["SPT"])
-		if err != nil {
-			fmt.Println("converting string SPT to int")
-			return err
-		}
-
-		log.DptPort, err = strconv.Atoi(prefixesMap["DPT"])
-		if err != nil {
-			fmt.Println("converting string DPT to int")
-			return err
-		}
-
-		if prefixesMap["WINDOW"] == "" {
-			log.Window = 0
+		if prefixesMap["LEN"] == "" {
+			logLine.PacketLen = 0
 		} else {
-			log.Window, err = strconv.Atoi(prefixesMap["WINDOW"])
+			logLine.PacketLen, err = strconv.Atoi(prefixesMap["LEN"])
 			if err != nil {
-				fmt.Println("converting string WINDOW to int")
+				log.Println("ERROR: converting string LEN to int")
 				return err
 			}
 		}
 
-		*logs = append(*logs, log)
+		if prefixesMap["TTL"] == "" {
+			logLine.Ttl = 0
+		} else {
+			logLine.Ttl, err = strconv.Atoi(prefixesMap["TTL"])
+			if err != nil {
+				log.Println("ERROR: converting string TTL to int")
+				return err
+			}
+		}
+
+		if prefixesMap["ID"] == "" {
+			logLine.PacketId = 0
+		} else {
+			logLine.PacketId, err = strconv.Atoi(prefixesMap["ID"])
+			if err != nil {
+				fmt.Println("ERROR: converting string ID to int")
+				return err
+			}
+		}
+
+		if prefixesMap["SPT"] == "" {
+			logLine.SrcPort = 0
+		} else {
+			logLine.SrcPort, err = strconv.Atoi(prefixesMap["SPT"])
+			if err != nil {
+				fmt.Println("ERROR: converting string SPT to int")
+				return err
+			}
+		}
+
+		if prefixesMap["DPT"] == "" {
+			logLine.DptPort = 0
+		} else {
+			logLine.DptPort, err = strconv.Atoi(prefixesMap["DPT"])
+			if err != nil {
+				fmt.Println("ERROR: converting string DPT to int")
+				return err
+			}
+		}
+
+		if prefixesMap["WINDOW"] == "" {
+			logLine.Window = 0
+		} else {
+			logLine.Window, err = strconv.Atoi(prefixesMap["WINDOW"])
+			if err != nil {
+				fmt.Println("ERROR: converting string WINDOW to int")
+				return err
+			}
+		}
+
+		// adding the structure to the slice []Log
+		*logs = append(*logs, logLine)
 	}
 
-	counter++
+	log.Println("INFO: parsing is done")
 	return err
 }
