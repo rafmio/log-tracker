@@ -75,6 +75,7 @@ func ParseSrcData(srcData *os.File, logs *[]Log) error {
 
 		if prefixesMap["LEN"] == "" {
 			logLine.PacketLen = 0
+			log.Println("WARNING: the LEN is empty")
 		} else {
 			logLine.PacketLen, err = strconv.Atoi(prefixesMap["LEN"])
 			if err != nil {
@@ -85,6 +86,7 @@ func ParseSrcData(srcData *os.File, logs *[]Log) error {
 
 		if prefixesMap["TTL"] == "" {
 			logLine.Ttl = 0
+			log.Println("WARNING: the TTL is empty")
 		} else {
 			logLine.Ttl, err = strconv.Atoi(prefixesMap["TTL"])
 			if err != nil {
@@ -95,6 +97,7 @@ func ParseSrcData(srcData *os.File, logs *[]Log) error {
 
 		if prefixesMap["ID"] == "" {
 			logLine.PacketId = 0
+			log.Println("WARINING: the ID is empty")
 		} else {
 			logLine.PacketId, err = strconv.Atoi(prefixesMap["ID"])
 			if err != nil {
@@ -105,6 +108,7 @@ func ParseSrcData(srcData *os.File, logs *[]Log) error {
 
 		if prefixesMap["SPT"] == "" {
 			logLine.SrcPort = 0
+			log.Println("WARNING: the SPT is empty")
 		} else {
 			logLine.SrcPort, err = strconv.Atoi(prefixesMap["SPT"])
 			if err != nil {
@@ -115,6 +119,7 @@ func ParseSrcData(srcData *os.File, logs *[]Log) error {
 
 		if prefixesMap["DPT"] == "" {
 			logLine.DptPort = 0
+			log.Println("WARNING: the DPT is empty")
 		} else {
 			logLine.DptPort, err = strconv.Atoi(prefixesMap["DPT"])
 			if err != nil {
@@ -125,6 +130,7 @@ func ParseSrcData(srcData *os.File, logs *[]Log) error {
 
 		if prefixesMap["WINDOW"] == "" {
 			logLine.Window = 0
+			log.Println("WARNING: the WINDOW is empty")
 		} else {
 			logLine.Window, err = strconv.Atoi(prefixesMap["WINDOW"])
 			if err != nil {

@@ -41,16 +41,19 @@ type Log struct {
 func main() {
 	defer LogFile.Close()
 
-	logs := make([]Log, 0) // create slice for store parsed log structs
+	// create slice for store parsed log structs
+	logs := make([]Log, 0)
 
-	srcData, err := os.OpenFile(SrcFileName, os.O_RDONLY, 0) // open source file
+	// open source file
+	srcData, err := os.OpenFile(SrcFileName, os.O_RDONLY, 0)
 	if err != nil {
 		log.Fatal("ERROR: opening src file")
 	} else {
 		log.Println("INFO: the src file has been read")
 	}
 
-	err = ParseSrcData(srcData, &logs) // pass the read data and tmp storage for parsing
+	// pass the read data and tmp storage for parsing
+	err = ParseSrcData(srcData, &logs)
 	if err != nil {
 		fmt.Println("ERROR: main()", err.Error())
 	}
