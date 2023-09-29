@@ -130,7 +130,6 @@ func ParseSrcData(srcData *os.File, logs *[]Log) error {
 
 		if prefixesMap["WINDOW"] == "" {
 			logLine.Window = 0
-			log.Println("WARNING: the WINDOW is empty")
 		} else {
 			logLine.Window, err = strconv.Atoi(prefixesMap["WINDOW"])
 			if err != nil {
