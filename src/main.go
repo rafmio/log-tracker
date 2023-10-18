@@ -72,3 +72,21 @@ func main() {
 
 	srcData.Close()
 }
+
+// EXAMPLE: Time format
+/*
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	dateTime := time.Now()
+	fmt.Println("dateTime:", dateTime)
+
+	fmt.Println(dateTime.Format("15:04"))
+	fmt.Println(dateTime.Format("2006-1-2"))
+}
+*/
