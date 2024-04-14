@@ -11,7 +11,6 @@ func FileReader(file *os.File, filePosition int) []string {
 
 	slsStr := make([]string, 0)
 
-	// _, err := file.Seek(int64(filePosition), os.SEEK_SET) // os.SEEK_SET is deprecated
 	_, err := file.Seek(int64(filePosition), io.SeekStart)
 	if err != nil {
 		fmt.Println("setting file position:", err.Error())
