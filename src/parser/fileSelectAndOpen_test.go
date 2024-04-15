@@ -17,7 +17,7 @@ func TestSelectAndOpen(t *testing.T) {
 	if err != nil {
 		t.Fatalf("creating temp dir: %v", err)
 	}
-	defer os.RemoveAll(tempDir) // for delete all temp dirs and files
+	// defer os.RemoveAll(tempDir) // for delete all temp dirs and files
 
 	// the target directory will be set at env.
 	// set environment variable for path
