@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -18,7 +19,9 @@ func TestSelectAndOpen(t *testing.T) {
 	if err != nil {
 		t.Fatalf("creating temp dir: %v", err)
 	}
+	// defer os.RemoveAll(tempDir) // for delete all temp dirs and files
 
+	// set environment variable for path
 	currentDir, err := os.Getwd()
 	if err != nil {
 		t.Fatalf("getting current dir: %v", err)
@@ -30,16 +33,68 @@ func TestSelectAndOpen(t *testing.T) {
 		t.Fatalf("setting env var VARLOGDIR: %v", err)
 	}
 
+	// fill slice with temp filenames:
+	fileNames := make([]string, 0, 10)
+
 	for i := 0; i < 5; i++ {
-		fileName := "ufw.log" + strconv.Itoa(i)
-		file := filepath.Join(tempDir, fileName)
-		if i == 4 {
-			break
-		}
-		if err = os.WriteFile(file, []byte(line), 0644); err != nil {
-			t.Fatalf("writing file %s: %v", file, err)
+		ufwFileName := "ufw.log"     // база для создания пути временных файлов ufw
+		arbFileName := "someLog.log" // база для создания пути прочих файлов
+
+		// изменяем имена файлов для разнообразия, а также добавляем их в слайс
+		// для дальнейшей работы с путями (файлы с именями *.1, *2)
+		if i != 0 {
+			ufwFileName = ufwFileName + "." + strconv.Itoa(i)
+			arbFileName = arbFileName + "." + strconv.Itoa(i)
+
+			ufwFileName = filepath.Join(tempDir, ufwFileName)
+			arbFileName = filepath.Join(tempDir, arbFileName)
+			fileNames = append(fileNames, ufwFileName, arbFileName)
+		} else {
+			ufwFileName = filepath.Join(tempDir, ufwFileName)
+			arbFileName = filepath.Join(tempDir, arbFileName)
+			fileNames = append(fileNames, ufwFileName, arbFileName)
 		}
 
-		time.Sleep(time.Second * 2)
+		// создаем временные файлы, записываем туда строку, кроме i == 0
+		if i == 0 {
+			if err = os.WriteFile(ufwFileName, []byte(""), 0644); err != nil {
+				t.Fatalf("writing file %s: %v", ufwFileName, err)
+			}
+			if err = os.WriteFile(arbFileName, []byte(""), 0644); err != nil {
+				t.Fatalf("writing file %s: %v", arbFileName, err)
+			}
+		} else {
+			if err = os.WriteFile(ufwFileName, []byte(line), 0644); err != nil {
+				t.Fatalf("writing file %s: %v", ufwFileName, err)
+			}
+			if err = os.WriteFile(arbFileName, []byte(line), 0644); err != nil {
+				t.Fatalf("writing file %s: %v", arbFileName, err)
+			}
+		}
+
+		// меняем время файлов (по -10 часов * i каджой итерации)
+		timeRange := i * -10
+		timeToSet := time.Now().Add(time.Hour * time.Duration(timeRange))
+		if err = os.Chtimes(ufwFileName, timeToSet, timeToSet); err != nil {
+			t.Fatalf("changing time of file %s: %v", ufwFileName, err)
+		}
+		if err = os.Chtimes(arbFileName, timeToSet, timeToSet); err != nil {
+			t.Fatalf("changing time of file %s: %v", arbFileName, err)
+		}
 	}
+
+	fmt.Println(fileNames)
+	// for i := 0; i < 5; i++ {
+	// 	fileName := "ufw.log" + strconv.Itoa(i)
+	// 	file := filepath.Join(tempDir, fileName)
+	// 	if i == 4 {
+	// 		break
+	// 	}
+	// 	if err = os.WriteFile(file, []byte(line), 0644); err != nil {
+	// 		t.Fatalf("writing file %s: %v", file, err)
+	// 	}
+
+	// 	time.Sleep(time.Second * 2)
+	// }
+
 }
