@@ -35,10 +35,18 @@ func SelectAndOpen(directory string) (*os.File, error) {
 
 	// find the latest file
 	latestTime := mapFiles[files[0]]
-	latestFile := 
+	var latestFile string
 	for fileName, tm := range mapFiles {
 		if latestTime.Before(tm) {
 			latestTime = tm
+			latestFile = fileName
 		}
 	}
+
+	file, err := os.Open(latestFile)
+	if err != nil {
+		return nil, err
+	}
+
+	return file, nil
 }
