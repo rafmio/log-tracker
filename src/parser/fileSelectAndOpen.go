@@ -1,10 +1,15 @@
 package parser
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"time"
 )
+
+var mapFiles = make(map[string]time.Time)
+
+var ErrGetStatInfo = errors.New("can't get file info via Stat()")
 
 // pass target directory via env
 func SelectAndOpen(directory string) (*os.File, error) {
@@ -14,32 +19,26 @@ func SelectAndOpen(directory string) (*os.File, error) {
 		return nil, err
 	}
 
-	// slice for storing creating times
-	creationTimes := make([]time.Time, 0, len(files))
-
-	// fill the slice with creation time values
+	// fill mapFiles, check if file is empty
 	for _, filename := range files {
-		info, err := os.Stat(filename)
+
+		fi, err := os.Stat(filename)
 		if err != nil {
 			return nil, err
 		}
-		creationTimes = append(creationTimes, info.ModTime())
+
+		if fi.Size() == 0 {
+			continue
+		}
+		mapFiles[filename] = fi.ModTime()
 	}
 
-	latestTime := creationTimes[0] // start position for range
-	latestFile := files[0]
-
-	for i, tm := range creationTimes {
+	// find the latest file
+	latestTime := mapFiles[files[0]]
+	latestFile := 
+	for fileName, tm := range mapFiles {
 		if latestTime.Before(tm) {
 			latestTime = tm
-			latestFile = files[i]
 		}
 	}
-
-	file, err := os.Open(latestFile)
-	if err != nil {
-		return nil, err
-	}
-
-	return file, nil
 }
