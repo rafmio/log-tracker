@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -27,7 +28,7 @@ func SelectAndOpen(directory string) (*os.File, error) {
 			return nil, err
 		}
 
-		if fi.Size() == 0 {
+		if fi.Size() == 0 || strings.Contains(filename, ".gz") {
 			continue
 		}
 		mapFiles[filename] = fi.ModTime()
