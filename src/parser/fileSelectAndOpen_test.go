@@ -17,7 +17,7 @@ func TestSelectAndOpen(t *testing.T) {
 	if err != nil {
 		t.Fatalf("creating temp dir: %v", err)
 	}
-	// defer os.RemoveAll(tempDir) // for delete all temp dirs and files
+	defer os.RemoveAll(tempDir) // for delete all temp dirs and files
 
 	// the target directory will be set at env.
 	// set environment variable for path
@@ -85,8 +85,8 @@ func TestSelectAndOpen(t *testing.T) {
 	t.Run("run SelectAndOpen()", func(t *testing.T) {
 		// call SelectAndOpen():
 		file, _ := SelectAndOpen(envVarPath)
-		// want := fileNames[0] // 'ufw.log.1' - latest nonempty file
-		want := filepath.Join(currentDir, fileNames[0])
+		// want := fileNames[2] // 'ufw.log.1' - latest nonempty file
+		want := filepath.Join(currentDir, fileNames[2])
 		gotFileName := file.Name()
 		if gotFileName != want {
 			t.Errorf("got %s, want %s", gotFileName, want)
