@@ -14,6 +14,7 @@ type TstLines struct {
 }
 
 func TestFileReader(t *testing.T) {
+	// lines for creating reading tests
 	linesGeneral := []string{
 		"Apr 11 23:00:15 localhost kernel: [23604659.769285] [UFW BLOCK] IN=eth0 OUT= MAC=52:54:00:7c:d8:0f:fe:54:00:7c:d8:0f:08:00 SRC=91.240.118.248 DST=194.58.102.129 LEN=40 TOS=0x00 PREC=0x00 TTL=250 ID=34638 PROTO=TCP SPT=41605 DPT=63383 WINDOW=1024 RES=0x00 SYN URGP=0 ",
 		"Apr 11 23:00:33 localhost kernel: [23604677.653676] [UFW BLOCK] IN=eth0 OUT= MAC=52:54:00:7c:d8:0f:fe:54:00:7c:d8:0f:08:00 SRC=185.73.125.150 DST=194.58.102.129 LEN=40 TOS=0x00 PREC=0x00 TTL=246 ID=30104 PROTO=TCP SPT=54319 DPT=42274 WINDOW=1024 RES=0x00 SYN URGP=0 ",
@@ -27,12 +28,13 @@ func TestFileReader(t *testing.T) {
 		"Apr 11 23:03:12 localhost kernel: [23604836.487395] [UFW BLOCK] IN=eth0 OUT= MAC=52:54:00:7c:d8:0f:fe:54:00:7c:d8:0f:08:00 SRC=212.192.158.71 DST=194.58.102.129 LEN=44 TOS=0x00 PREC=0x00 TTL=248 ID=54321 PROTO=TCP SPT=44496 DPT=2099 WINDOW=65535 RES=0x00 SYN URGP=0 ",
 	}
 
-//	file, err := os.Open("/home/raf/log-tracker/src/log-files/shortUfw.log.1")
+	// mock log-file for test reading tests
 	file, err := os.Open("fileReader_cases.txt")
 	if err != nil {
 		fmt.Println("opening file:", err.Error())
 	}
 
+	// create test cases
 	TstLinesList := []TstLines{
 		{
 			name:         "three last lines",
