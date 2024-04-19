@@ -7,13 +7,16 @@ import (
 	"testing"
 )
 
-type stubFilePosition struct {
+type StubFilePosition struct {
 	filePosition int
 }
 
-// the functions under test gets *os.File as an argument,
-// evaluates current file position, and save it in env variable.
-// This is the test function for it:
+type TstCase struct {
+	name  string
+	f     *os.File
+	fSize int64            // fs.FileInfo.Size() - want
+	fp    StubFilePosition // got
+}
 
 func TestFindAndSet(t *testing.T) {
 
@@ -29,7 +32,11 @@ func TestFindAndSet(t *testing.T) {
 	tmpDirName := createTempFiles(t, tmpFiles)
 	defer os.RemoveAll(tmpDirName) // for delete all temp dirs and files
 
+	tstCases := make([]TstCase, len(tmpFiles))
+
+	// fill test cases struct:
 	for i := 0; i < len(tmpFiles); i++ {
+		tstCases[i].name = tmpFiles[i]
 
 	}
 }
@@ -61,7 +68,7 @@ func createTempFiles(t testing.TB, tmpFiles []string) string {
 
 	for i := 0; i < len(lines); i++ {
 		// generating filenames
-		fileName := filepath.Join("ufw.log", ".", strconv.Itoa(i))
+		fileName := "ufw.log" + "." + strconv.Itoa(i)
 		tmpFile := filepath.Join(tempDir, fileName) // "logs/ufw.log.*"
 		tmpFiles = append(tmpFiles, tmpFile)
 
