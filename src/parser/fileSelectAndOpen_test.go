@@ -46,11 +46,11 @@ func TestSelectAndOpen(t *testing.T) {
 			ufwFileName = ufwFileName + "." + strconv.Itoa(i)
 			arbFileName = arbFileName + "." + strconv.Itoa(i)
 
-			ufwFileName = filepath.Join(tempDir, ufwFileName)
+			ufwFileName = filepath.Join(tempDir, ufwFileName) // "varlog/ufw.log
 			arbFileName = filepath.Join(tempDir, arbFileName)
 			fileNames = append(fileNames, ufwFileName, arbFileName)
 		} else {
-			ufwFileName = filepath.Join(tempDir, ufwFileName)
+			ufwFileName = filepath.Join(tempDir, ufwFileName) //"varlog/ufw.log.*
 			arbFileName = filepath.Join(tempDir, arbFileName)
 			fileNames = append(fileNames, ufwFileName, arbFileName)
 		}

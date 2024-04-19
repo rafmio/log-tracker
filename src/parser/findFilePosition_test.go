@@ -22,14 +22,20 @@ func TestFindAndSet(t *testing.T) {
 		t.Fatalf("setting env var VARLOGFP: %v", err)
 	}
 
+	// slice for storing temp file names
+	tmpFiles := make([]string, 0)
+
 	// creating a temp directory for temp files to run tests on them
-	tmpDirName, tmpFileNames := createTempFiles(t)
+	tmpDirName := createTempFiles(t, tmpFiles)
 	defer os.RemoveAll(tmpDirName) // for delete all temp dirs and files
 
+	for i := 0; i < len(tmpFiles); i++ {
+
+	}
 }
 
 // createTempFiles returns name of directory for further os.RemoveAll(dirname)
-func createTempFiles(t testing.TB) (string, []string) {
+func createTempFiles(t testing.TB, tmpFiles []string) string {
 	t.Helper()
 	// test line for write into temp files
 	lines := []string{
@@ -50,23 +56,37 @@ func createTempFiles(t testing.TB) (string, []string) {
 		t.Fatalf("creating temp dir: %v", err)
 	}
 
-	// set path to directory with files
-	// currentDir, err := os.Getwd()
-	// if err != nil {
-	// t.Fatalf("getting current dir: %v", err)
-	// }
-
-	// fullPathToDirWithLogs := filepath.Join(currentDir, tempDir) // а зачем нам полный путь?
-
 	// slice for storing temp file names
-	tmpFiles := make([]string, 0)
+	// tmpFiles := make([]string, 0) // try pass it into current func by pointer
 
-	for i := 0; i < 5; i++ {
+	for i := 0; i < len(lines); i++ {
+		// generating filenames
 		fileName := filepath.Join("ufw.log", ".", strconv.Itoa(i))
-		tmpFile := filepath.Join(tempDir, fileName)
+		tmpFile := filepath.Join(tempDir, fileName) // "logs/ufw.log.*"
 		tmpFiles = append(tmpFiles, tmpFile)
 
+		// create len(lens) files, write line there
+		f, err := os.Create(tmpFile)
+		if err != nil {
+			t.Fatalf("creating file: %v", err)
+		}
+		defer f.Close()
+
+		// filling files +1 line per each iteration
+		for j := 0; j <= i; j++ {
+			if i == 0 {
+				_, err := f.WriteString("") // empty file
+				if err != nil {
+					t.Fatalf("writing to file: %v", err)
+				}
+			}
+			// non-empty files:
+			_, err := f.WriteString(lines[j] + "\n")
+			if err != nil {
+				t.Fatalf("writing to file: %v", err)
+			}
+		}
 	}
 
-	return tempDir, tmpFiles
+	return tempDir
 }
