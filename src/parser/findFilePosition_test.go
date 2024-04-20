@@ -103,26 +103,65 @@ func TestIfFPCorrect(t *testing.T) {
 	defer os.RemoveAll(tmpDirName)             // for delete all temp dirs and files
 
 	for i := 0; i < len(tmpFiles); i++ {
-		file, _ := os.Open(tmpFiles[i])
-		fi, _ := file.Stat()
+		t.Run("check if FP is correct", func(t *testing.T) {
+			file, _ := os.Open(tmpFiles[i]) // open temp file
+			fi, _ := file.Stat()            // save the file's size into fi var
 
-		if i%2 == 0 {
-			fp := FilePosition{
-				filePosition: fi.Size(),
+			if i%2 == 0 {
+				fp := FilePosition{ // initialize FiliPosition instance
+					filePosition: fi.Size(), // with Size()
+				}
+				result, _ := fp.IfFPCorrect(file)
+				if result != true {
+					t.Errorf("IfFPCorrect(): got: %v, want: %v", true, result)
+				}
+			} else {
+				fp := FilePosition{
+					filePosition: fi.Size() + int64(i+i*1000), // fake incorrect file position
+				}
+				result, _ := fp.IfFPCorrect(file)
+				if result != false {
+					t.Errorf("IfFPCorrect(): got: %v, want: %v", false, result)
+				}
 			}
-			result, _ := fp.IfFPCorrect(file)
-			if result != true {
-				t.Errorf("IfFPCorrect(): got: %v, want: %v", true, result)
-			}
-		} else {
-			fp := FilePosition{
-				filePosition: fi.Size() + int64(i+i*1000),
-			}
-			result, _ := fp.IfFPCorrect(file)
-			if result != false {
-				t.Errorf("IfFPCorrect(): got: %v, want: %v", false, result)
-			}
-		}
+		})
 
+	}
+}
+
+func TestGetFPFromEnv(t *testing.T) {
+	for i := 1; i <= 10; i++ {
+		t.Run("get file position from env", func(t *testing.T) {
+			want := i * 1000
+			err := os.Setenv(VarLogFPEnvVarName, strconv.Itoa(want))
+			if err != nil {
+				t.Fatalf("os.Setenv(): %v", err)
+			}
+			fp := new(FilePosition)
+			got := fp.GetFPFromEnv()
+
+			if got != want {
+				t.Errorf("GetFPFromEnv(): got %v, want %v", got, want)
+			}
+		})
+	}
+}
+
+func TestWriteFPToEnv(t *testing.T) {
+	for i := 1; i <= 10; i++ {
+		t.Run("write file position to env", func(t *testing.T) {
+			want := i * 1000
+			fp := FilePosition{
+				filePosition: int64(want),
+			}
+			err := fp.WriteFPToEnv()
+			if err != nil {
+				t.Fatalf("WriteFPToEnv(): %v", err)
+			}
+			got := os.Getenv(VarLogFPEnvVarName)
+			if got != strconv.Itoa(want) {
+				t.Errorf("WriteFPToEnv(): got %v, want %v", got, want)
+			}
+		})
 	}
 }
