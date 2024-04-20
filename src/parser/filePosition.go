@@ -1,9 +1,12 @@
 package parser
 
 import (
+	"errors"
 	"io"
 	"os"
 )
+
+var ErrIncorrectFilePosition = errors.New("the file position is larger than file size")
 
 type FilePosition struct {
 	filePosition int64
@@ -23,5 +26,15 @@ func (fp *FilePosition) FindFP(file *os.File) error {
 
 // the IfFPCorrect() method compares the file position with the file size
 func (fp *FilePosition) IfFPCorrect(file *os.File) (bool, error) {
+	fi, err := file.Stat()
+	if err != nil {
+		return false, err
+	}
+	fileSize := fi.Size()
 
+	if fp.filePosition > fileSize {
+		return false, ErrIncorrectFilePosition
+	}
+
+	return true, nil
 }
