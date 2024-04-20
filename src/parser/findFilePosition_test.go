@@ -12,7 +12,6 @@ type TstCase struct {
 	name  string
 	f     *os.File
 	fSize int64 // fs.FileInfo.Size() - want
-	// fp    FilePosition
 }
 
 func TestFindFP(t *testing.T) {
@@ -96,4 +95,41 @@ func createTempFiles(t testing.TB, tmpFiles []string) string {
 	}
 
 	return tempDir
+}
+
+type TstCheckFP struct {
+	// input int64
+	FilePosition
+	output   bool
+	expected bool
+}
+
+func TestIfFPCorrect(t *testing.T) {
+	tmpFiles := make([]string, 10)             // slice for storing 10 temp file names
+	tmpDirName := createTempFiles(t, tmpFiles) // temp dir for temp files to run tests
+	defer os.RemoveAll(tmpDirName)             // for delete all temp dirs and files
+
+	tstCheckFP := make([]TstCheckFP, 10)
+
+	for i := 0; i < len(tmpFiles); i++ {
+		file, _ := os.Open(tmpFiles[i])
+		fi, _ := file.Stat()
+
+		if i%2 == 0 {
+			// tstCheckFP[i].input = fi.Size()
+			// tstCheckFP[i].output, _ = tstCheckFP.IfFPCorrect(file)
+			// tstCheckFP[i].expected = true
+			tstCheckFP[i].filePosition = fi.Size()
+			tstCheckFP[i].output, _ = tstCheckFP[0].filePosition.IfFPCorrect(file)
+		} else {
+			tstCheckFP[i].input = fi.Size() + int64(i+i*1000)
+			tstCheckFP[i].output, _ = tstCheckFP.IfFPCorrect(file)
+			tstCheckFP[i].expected = false
+		}
+
+		if tstCheckFP[i].output != tstCheckFP[i].expected {
+			t.Errorf("IfFPCorrect(): got: %v, want %v", tstCheckFP[i].output, tstCheckFP[i].expected)
+		}
+
+	}
 }
