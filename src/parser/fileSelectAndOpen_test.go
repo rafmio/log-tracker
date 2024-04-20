@@ -27,12 +27,7 @@ func TestSelectAndOpen(t *testing.T) {
 	}
 
 	// construct full path to target test dir
-	envVarPath := filepath.Join(currentDir, tempDir) 
-
-	// TODO: unused env var
-	if err = os.Setenv("VARLOGDIR", envVarPath); err != nil {
-		t.Fatalf("setting env var VARLOGDIR: %v", err)
-	}
+	envVarPath := filepath.Join(currentDir, tempDir)
 
 	// fill slice with temp filenames (ufw.log*) for range:
 	fileNames := make([]string, 0, 10)

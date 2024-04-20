@@ -2,19 +2,19 @@ package parser
 
 import (
 	"bufio"
-	"fmt"
 	"io"
+	"log"
 	"os"
 )
 
-func FileReader(file *os.File, filePosition int) []string {
+func FileReader(file *os.File, filePosition int64) ([]string, error) {
 
 	slsStr := make([]string, 0)
 
-	_, err := file.Seek(int64(filePosition), io.SeekStart)
+	_, err := file.Seek(filePosition, io.SeekStart)
 	if err != nil {
-		fmt.Println("setting file position:", err.Error())
-		// TODO: log error
+		log.Println("os.Seek():", err)
+		return slsStr, err
 	}
 
 	scanner := bufio.NewScanner(file)
@@ -24,9 +24,8 @@ func FileReader(file *os.File, filePosition int) []string {
 	}
 
 	if err := scanner.Err(); err != nil {
-		fmt.Println("scanning lines:", err.Error())
-		// TODO: log error
+		log.Println("scanning lines:", err.Error())
 	}
 
-	return slsStr
+	return slsStr, nil
 }
