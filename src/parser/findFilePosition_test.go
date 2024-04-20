@@ -86,11 +86,12 @@ func createTempFiles(t testing.TB, tmpFiles []string) string {
 				if err != nil {
 					t.Fatalf("writing to file: %v", err)
 				}
-			}
-			// non-empty files:
-			_, err := f.WriteString(lines[j] + "\n")
-			if err != nil {
-				t.Fatalf("writing to file: %v", err)
+			} else {
+				// non-empty files:
+				_, err := f.WriteString(lines[j] + "\n")
+				if err != nil {
+					t.Fatalf("writing to file: %v", err)
+				}
 			}
 		}
 	}
