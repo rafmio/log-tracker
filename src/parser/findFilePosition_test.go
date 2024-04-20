@@ -36,11 +36,11 @@ func TestFindAndSet(t *testing.T) {
 
 	// fill test cases struct:
 	for i := 0; i < len(tmpFiles); i++ {
-		tstCases[i].name = tmpFiles[i]
-		tstCases[i].f, err := os.Open(tmpFiles[i])
-		if err != nil {
-			t.Fatalf("opening file %s: %v", tmpFiles[i], err)
-		}
+		tstCases[i].name = tmpFiles[i]          // initialize name field
+		tstCases[i].f, _ = os.Open(tmpFiles[i]) // initialize f field (opened *os.File)
+		defer tstCases[i].f.Close()             // defer closing opened file
+		fi, _ := tstCases[i].f.Stat()           // get stat info
+		tstCases[i].fSize = fi.Size()           // initialize fSize field
 
 	}
 }
