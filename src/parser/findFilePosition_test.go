@@ -37,6 +37,10 @@ func TestFindAndSet(t *testing.T) {
 	// fill test cases struct:
 	for i := 0; i < len(tmpFiles); i++ {
 		tstCases[i].name = tmpFiles[i]
+		tstCases[i].f, err := os.Open(tmpFiles[i])
+		if err != nil {
+			t.Fatalf("opening file %s: %v", tmpFiles[i], err)
+		}
 
 	}
 }
