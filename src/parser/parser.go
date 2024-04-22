@@ -17,10 +17,10 @@ type LogEntry struct {
 	SrcIP  string
 	Len    string
 	Ttl    string
-	Id     string
+	Id     string // will named 'inner id' in database
 	Spt    string
 	Dpt    string
-	Window string
+	Window string // will named 'wndw' in database
 }
 
 func ParseLog(log string) (LogEntry, error) {
