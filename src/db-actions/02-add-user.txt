@@ -1,0 +1,13 @@
+Add user:
+CREATE ROLE raf WITH LOGIN PASSWORD '******';
+GRANT ALL PRIVILEGES ON DATABASE logtracker TO raf;
+
+Connect to database with new role (user):
+$ psql -U raf logtracker 
+
+Add new privileges:
+$ sudo -u postgres psql
+postgres=# \c logertracker
+logtracker=# GRANT ALL PRIVILEGES ON TABLE log_entries TO raf;
+logtracker=# GRANT ALL PRIVILEGES ON SEQUENCE log_entries_id_seq TO raf;
+
