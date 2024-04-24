@@ -1,16 +1,14 @@
 #!/bin/bash
 
-# Creating a 'lt1' database
-echo "CREATE DATABASE lt1;" | psql
+# Создание базы данных
+sudo -u postgres psql postgres
+CREATE DATABASE lt1;
+\q
 
-# Creating a user with the password
-echo "CREATE ROLE raf WITH LOGIN PASSWORD 'qwq121';" | psql -U postgres
-
-# Give the raf user the rights to the 'lt1' database
-echo "GRANT ALL PRIVILEGES ON DATABASE lt1 TO raf;" | psql -U postgres
-
-# Creating the log_entries table in the lt1 database
-echo "CREATE TABLE log_entries (
+# Создание таблицы
+sudo -u postgres psql lt1
+\c lt1
+CREATE TABLE log_entries (
  id SERIAL PRIMARY KEY,
  tmstmp TIMESTAMP NOT NULL,
  srcip inet NOT NULL,
@@ -20,16 +18,14 @@ echo "CREATE TABLE log_entries (
  spt varchar(255),
  dpt varchar(255),
  wndw varchar(255)
-);" | psql -d lt1 -U raf
+);
+\q
 
-# Give the raf user rights to the log_entries table
-echo "GRANT ALL PRIVILEGES ON TABLE log_entries TO raf;" | psql -d lt1 -U raf
-
-# We give the raf user the rights to the log_entries_id_seq sequence
-echo "GRANT ALL PRIVILEGES ON SEQUENCE log_entries_id_seq TO raf;" | psql -d lt1 -U raf
-
-# make the file executable:
-# chmod +x filename
-#
-# make the file non-executable:
-# chmod -x filename
+# Создание пользователя и назначение прав
+sudo -u postgres psql
+CREATE ROLE raf WITH LOGIN PASSWORD 'qwq121';
+GRANT ALL PRIVILEGES ON DATABASE lt1 TO raf;
+GRANT ALL PRIVILEGES ON TABLE log_entries TO raf;
+GRANT ALL PRIVILEGES ON SEQUENCE log_entries_id_seq TO raf;
+\q
+# Обратите внимание, что для выполнения команд, требующих привилегии суперпользователя, используется команда sudo с указанием пользователя postgres.
