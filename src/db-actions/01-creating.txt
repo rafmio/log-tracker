@@ -1,5 +1,8 @@
 MANUAL ACTIONS
 
+Create db:
+CREATE DATABASE logtracker;
+
 Creating table (relation):
 
 CREATE TABLE log_entries (
