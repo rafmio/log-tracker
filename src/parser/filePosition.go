@@ -10,7 +10,8 @@ import (
 
 var ErrIncorrectFilePosition = errors.New("the file position is larger than file size")
 
-var VarLogFPEnvVarName string = "VARLOGFP"
+var VarLogFPEnvVarName string = "VARLOGFP" 
+// TODO: consider how to set the environment variable differently
 
 type FilePosition struct {
 	filePosition int64
