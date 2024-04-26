@@ -1,9 +1,9 @@
-package main
+package logtracker
 
 import (
 	"log"
+	"logtracker/parser"
 	"os"
-	// "parser/parser"
 )
 
 func main() {
