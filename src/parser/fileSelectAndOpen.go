@@ -8,12 +8,15 @@ import (
 	"time"
 )
 
-var mapFiles = make(map[string]time.Time)
+// var mapFiles = make(map[string]time.Time)
 
 var ErrGetStatInfo = errors.New("can't get file info via Stat()")
 
 // pass target directory via env
 func SelectAndOpen(directory string) (*os.File, error) {
+	// create variable for storing filenames and time
+	var mapFiles = make(map[string]time.Time)
+
 	// looking at the filenames in the entire directory:
 	files, err := filepath.Glob(filepath.Join(directory, "ufw.log*"))
 	if err != nil {
