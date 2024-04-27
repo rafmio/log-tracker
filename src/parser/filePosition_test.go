@@ -140,7 +140,7 @@ func TestGetFPFromEnv(t *testing.T) {
 			fp := new(FilePosition)
 			got := fp.GetFPFromEnv()
 
-			if got != want {
+			if got != int64(want) {
 				t.Errorf("GetFPFromEnv(): got %v, want %v", got, want)
 			}
 		})
