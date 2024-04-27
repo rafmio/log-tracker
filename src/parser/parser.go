@@ -34,6 +34,7 @@ func ParseLog(log string) (LogEntry, error) {
 	tokens := strings.Split(log, " ") // split log-entry into slices
 
 	// PARSE TIMESTAMP
+	// the UFW log file does not specify the year, we assign the current one
 	year := time.Now().Year()
 	yearStr := fmt.Sprint(year)
 
@@ -52,6 +53,8 @@ func ParseLog(log string) (LogEntry, error) {
 	months["Dec"] = "12"
 
 	month := months[tokens[0]]
+
+	// cast to the appropriate format so that the time.Parse was able to parse
 	timeStampStr := yearStr + "-" + month + "-" + tokens[1] + " " + tokens[2]
 	timeStamp, err := time.Parse("2006-01-02 15:04:05", timeStampStr)
 	if err != nil {
