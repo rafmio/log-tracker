@@ -129,19 +129,36 @@ func TestIfFPCorrect(t *testing.T) {
 	}
 }
 
+// func TestGetFPFromEnv(t *testing.T) {
+// 	for i := 1; i <= 10; i++ {
+// 		t.Run("get file position from env", func(t *testing.T) {
+// 			want := i * 1000
+// 			err := os.Setenv(VarLogFPEnvVarName, strconv.Itoa(want))
+// 			if err != nil {
+// 				t.Fatalf("os.Setenv(): %v", err)
+// 			}
+// 			fp := new(FilePosition)
+// 			got := fp.GetFPFromEnv()
+
+//				if got != int64(want) {
+//					t.Errorf("GetFPFromEnv(): got %v, want %v", got, want)
+//				}
+//			})
+//		}
+//	}
 func TestGetFPFromEnv(t *testing.T) {
 	for i := 1; i <= 10; i++ {
-		t.Run("get file position from env", func(t *testing.T) {
+		t.Run("get the file position from env", func(t *testing.T) {
 			want := i * 1000
 			err := os.Setenv(VarLogFPEnvVarName, strconv.Itoa(want))
 			if err != nil {
 				t.Fatalf("os.Setenv(): %v", err)
 			}
 			fp := new(FilePosition)
-			got := fp.GetFPFromEnv()
+			_ = fp.GetFPFromEnv()
 
-			if got != int64(want) {
-				t.Errorf("GetFPFromEnv(): got %v, want %v", got, want)
+			if fp.filePosition != int64(want) {
+				t.Errorf("GetFPFromEnv(): got %v, want %v", fp.filePosition, want)
 			}
 		})
 	}

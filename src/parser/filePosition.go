@@ -47,21 +47,39 @@ func (fp *FilePosition) IfFPCorrect(file *os.File) (bool, error) {
 }
 
 // GetFPFromEnv() method reads the value of the environment variable VARLOGFP
-func (fp *FilePosition) GetFPFromEnv() int64 {
+// func (fp *FilePosition) GetFPFromEnv() int64 {
+// 	fpStr := os.Getenv(VarLogFPEnvVarName)
+// 	if fpStr == "" {
+// 		log.Printf("the %s environment variable was not found. The file position was set to 0", VarLogFPEnvVarName)
+// 		return 0
+// 	}
+
+// 	// convert fpStr (env var value) from string to int64
+// 	fpInt64, err := strconv.ParseInt(fpStr, 10, 64)
+// 	if err != nil {
+// 		log.Println("can't convert string go integer, the file position was set to 0")
+// 		return 0
+// 	}
+
+//		return fpInt64
+//	}
+func (fp *FilePosition) GetFPFromEnv() error {
 	fpStr := os.Getenv(VarLogFPEnvVarName)
 	if fpStr == "" {
 		log.Printf("the %s environment variable was not found. The file position was set to 0", VarLogFPEnvVarName)
-		return 0
+		return nil
 	}
 
 	// convert fpStr (env var value) from string to int64
 	fpInt64, err := strconv.ParseInt(fpStr, 10, 64)
 	if err != nil {
 		log.Println("can't convert string go integer, the file position was set to 0")
-		return 0
+		return err
 	}
 
-	return fpInt64
+	fp.filePosition = fpInt64
+
+	return nil
 }
 
 // WriteFPToEnv writes file position to environment to VARLOGFP
