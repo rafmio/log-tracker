@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"./parser"
+	"logtracker/parser"
 	// _ "github.com/lib/pq" // PostgreSQL driver
 )
 
