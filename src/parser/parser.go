@@ -23,15 +23,15 @@ type LogEntry struct {
 	Window string // will named 'wndw' in database
 }
 
-func ParseLog(log string) (LogEntry, error) {
+func ParseLog(logLine string) (LogEntry, error) {
 
 	result := LogEntry{}
 
-	if log == "" {
+	if logLine == "" {
 		return LogEntry{}, ErrEmptyString
 	}
 
-	tokens := strings.Split(log, " ") // split log-entry into slices
+	tokens := strings.Split(logLine, " ") // split log-entry into slices
 
 	// PARSE TIMESTAMP
 	// the UFW log file does not specify the year, we assign the current one

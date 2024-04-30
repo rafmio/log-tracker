@@ -15,4 +15,9 @@ func main() {
 	path := os.Getenv("VARLOGPATH")
 
 	file, err := parser.SelectAndOpen(path)
+	if err != nil {
+		log.Println(err)
+	}
+	defer file.Close()
+
 }
