@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+
+	"./parser"
 	// _ "github.com/lib/pq" // PostgreSQL driver
 )
 
@@ -28,7 +30,7 @@ var cDBc ConnectDBConfig = ConnectDBConfig{
 }
 
 // InsertToDb() connect to DB, check if the record exists, if not, insert the record
-func InsertToDb(logEntry LogEntry, cDBc ConnectDBConfig) error {
+func InsertToDb(logEntry parser.LogEntry, cDBc ConnectDBConfig) error {
 	dataSourceName := fmt.Sprint("user=%s dbname=%s password=%s sslmode %s",
 		cDBc.user,
 		cDBc.dbname,
