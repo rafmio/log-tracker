@@ -2,8 +2,8 @@ package main
 
 import (
 	"log"
-	dbhanlder "logtracker/dbhanlder"
-	parser "logtracker/parser"
+	"logtracker/dbhandler"
+	"logtracker/parser"
 	"os"
 )
 
@@ -67,7 +67,7 @@ func main() {
 			log.Println(err)
 		}
 
-		err = dbhanlder.InsertToDB(logEntry)
+		err = dbhandler.InsertToDB(logEntry)
 		if err != nil {
 			log.Println(err)
 		}
