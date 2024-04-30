@@ -1,8 +1,9 @@
-package logtracker
+package main
 
 import (
 	"log"
-	"logtracker/parser"
+	dbhanlder "logtracker/dbhanlder"
+	parser "logtracker/parser"
 	"os"
 )
 
@@ -21,9 +22,11 @@ func main() {
 
 	path := os.Getenv("VARLOGPATH")
 
-	fp := parser.FilePosition{filePosition: 0}
-	fp.GetFPFromEnv()
-
+	fp := new(parser.FilePosition)
+	err = fp.GetFPFromEnv() // get fp from env
+	if err != nil {
+		log.Println(err)
+	}
 
 	// open the file
 	file, err := parser.SelectAndOpen(path)
@@ -32,10 +35,41 @@ func main() {
 	}
 	defer file.Close()
 
+	// check if the file position is correct
+	correct, err := fp.IfFPCorrect(file)
+	if err != nil {
+		log.Println(err)
+	}
+	if !correct {
+		log.Println("incorrect file position")
+		fp.filePosition = int64(0)
+	}
+
 	// read file since exact file position
-	logLines, err := parser.FileReader(file, ???)
+	logLines, err := parser.FileReader(file, fp.filePosition)
 	if err != nil {
 		log.Println(err)
 	}
 
+	err = fp.FindFP(file)
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = fp.WriteFPToEnv()
+	if err != nil {
+		log.Println(err)
+	}
+
+	for _, logLine := range logLines {
+		logEntry, err := parser.ParseLog(logLine)
+		if err != nil {
+			log.Println(err)
+		}
+
+		err = dbhanlder.InsertToDB(logEntry)
+		if err != nil {
+			log.Println(err)
+		}
+	}
 }
