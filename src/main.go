@@ -42,11 +42,11 @@ func main() {
 	}
 	if !correct {
 		log.Println("incorrect file position")
-		fp.filePosition = int64(0)
+		fp.Fp = int64(0)
 	}
 
 	// read file since exact file position
-	logLines, err := parser.FileReader(file, fp.filePosition)
+	logLines, err := parser.FileReader(file, fp.Fp)
 	if err != nil {
 		log.Println(err)
 	}
@@ -67,7 +67,7 @@ func main() {
 			log.Println(err)
 		}
 
-		err = dbhandler.InsertToDB(logEntry)
+		err = dbhandler.InsertToDb(logEntry, dbhandler.CDBc)
 		if err != nil {
 			log.Println(err)
 		}

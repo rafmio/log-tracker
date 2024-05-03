@@ -6,7 +6,8 @@ import (
 	"log"
 
 	"logtracker/parser"
-	// _ "github.com/lib/pq" // PostgreSQL driver
+
+	_ "github.com/lib/pq" // PostgreSQL driver
 )
 
 // declare the structure of the database connection parameters
@@ -20,7 +21,7 @@ type ConnectDBConfig struct {
 }
 
 // initialize ConnectDBConfig with exact values
-var cDBc ConnectDBConfig = ConnectDBConfig{
+var CDBc ConnectDBConfig = ConnectDBConfig{
 	driverName: "postgres",
 	user:       "raf",
 	dbname:     "logtracker",
@@ -31,7 +32,7 @@ var cDBc ConnectDBConfig = ConnectDBConfig{
 
 // InsertToDb() connect to DB, check if the record exists, if not, insert the record
 func InsertToDb(logEntry parser.LogEntry, cDBc ConnectDBConfig) error {
-	dataSourceName := fmt.Sprint("user=%s dbname=%s password=%s sslmode %s",
+	dataSourceName := fmt.Sprintf("user=%s dbname=%s password=%s sslmode=%s",
 		cDBc.user,
 		cDBc.dbname,
 		cDBc.password,
@@ -96,10 +97,10 @@ func InsertToDb(logEntry parser.LogEntry, cDBc ConnectDBConfig) error {
 }
 
 // check if the record exists
-func CheckIfRecordExists(db *sql.DB, logEntry LogEntry) (bool, error) {
+func CheckIfRecordExists(db *sql.DB, logEntry parser.LogEntry) (bool, error) {
 	// preparing the query for SELECT
 	query := fmt.Sprintf("SELECT * FROM %s WHERE %s AND %s AND %s AND %s AND %s AND %s AND %s AND %s",
-		cDBc.tableName,
+		CDBc.tableName,
 		"tmstmp = $1",
 		"srcip = $2",
 		"len = $3",
@@ -118,7 +119,7 @@ func CheckIfRecordExists(db *sql.DB, logEntry LogEntry) (bool, error) {
 
 	// executing the query
 	rows, err := stmt.Query(
-		logEntry.Tmstmp,
+		logEntry.TmStmp,
 		logEntry.SrcIP,
 		logEntry.Len,
 		logEntry.Ttl,
