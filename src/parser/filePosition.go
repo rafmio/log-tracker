@@ -15,7 +15,7 @@ var VarLogFPEnvVarName string = "VARLOGFP"
 // TODO: consider how to set the environment variable differently
 
 type FilePosition struct {
-	filePosition int64
+	Fp int64
 }
 
 // FindFP() method takes a pointer to an open file and finds the current file position
@@ -25,7 +25,7 @@ func (fp *FilePosition) FindFP(file *os.File) error {
 		return err
 	}
 
-	fp.filePosition = filePosition
+	fp.Fp = filePosition
 
 	return nil
 }
@@ -39,7 +39,7 @@ func (fp *FilePosition) IfFPCorrect(file *os.File) (bool, error) {
 	}
 	fileSize := fi.Size()
 
-	if fp.filePosition > fileSize {
+	if fp.Fp > fileSize {
 		return false, ErrIncorrectFilePosition
 	}
 
@@ -77,14 +77,14 @@ func (fp *FilePosition) GetFPFromEnv() error {
 		return err
 	}
 
-	fp.filePosition = fpInt64
+	fp.Fp = fpInt64
 
 	return nil
 }
 
 // WriteFPToEnv writes file position to environment to VARLOGFP
 func (fp *FilePosition) WriteFPToEnv() error {
-	err := os.Setenv(VarLogFPEnvVarName, strconv.Itoa(int(fp.filePosition)))
+	err := os.Setenv(VarLogFPEnvVarName, strconv.Itoa(int(fp.Fp)))
 	if err != nil {
 		return err
 	}

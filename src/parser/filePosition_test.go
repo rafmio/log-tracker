@@ -35,8 +35,8 @@ func TestFindFP(t *testing.T) {
 			tstCases[i].fSize = fi.Size()                    // initialize fSize field
 			_ = stubFilePosition.FindFP(tstCases[i].f)       // run FindFP() itself
 
-			if stubFilePosition.filePosition != settedFP || stubFilePosition.filePosition != tstCases[i].fSize {
-				t.Errorf("got %d, want %d, want %d", stubFilePosition.filePosition, settedFP, tstCases[i].fSize)
+			if stubFilePosition.Fp != settedFP || stubFilePosition.Fp != tstCases[i].fSize {
+				t.Errorf("got %d, want %d, want %d", stubFilePosition.Fp, settedFP, tstCases[i].fSize)
 			}
 		})
 	}
@@ -109,7 +109,7 @@ func TestIfFPCorrect(t *testing.T) {
 
 			if i%2 == 0 {
 				fp := FilePosition{ // initialize FiliPosition instance
-					filePosition: fi.Size(), // with Size()
+					Fp: fi.Size(), // with Size()
 				}
 				result, _ := fp.IfFPCorrect(file)
 				if result != true {
@@ -117,7 +117,7 @@ func TestIfFPCorrect(t *testing.T) {
 				}
 			} else {
 				fp := FilePosition{
-					filePosition: fi.Size() + int64(i+i*1000), // fake incorrect file position
+					Fp: fi.Size() + int64(i+i*1000), // fake incorrect file position
 				}
 				result, _ := fp.IfFPCorrect(file)
 				if result != false {
@@ -157,8 +157,8 @@ func TestGetFPFromEnv(t *testing.T) {
 			fp := new(FilePosition)
 			_ = fp.GetFPFromEnv()
 
-			if fp.filePosition != int64(want) {
-				t.Errorf("GetFPFromEnv(): got %v, want %v", fp.filePosition, want)
+			if fp.Fp != int64(want) {
+				t.Errorf("GetFPFromEnv(): got %v, want %v", fp.Fp, want)
 			}
 		})
 	}
@@ -169,7 +169,7 @@ func TestWriteFPToEnv(t *testing.T) {
 		t.Run("write file position to env", func(t *testing.T) {
 			want := i * 1000
 			fp := FilePosition{
-				filePosition: int64(want),
+				Fp: int64(want),
 			}
 			err := fp.WriteFPToEnv()
 			if err != nil {
