@@ -2,6 +2,8 @@ package parser
 
 import (
 	"errors"
+	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -19,6 +21,8 @@ var ErrGetStatInfo = errors.New("can't get file info via Stat()")
 func SelectAndOpen(directory string) (*os.File, error) {
 	// create variable for storing filenames and time
 	var mapFiles = make(map[string]time.Time)
+
+	fmt.Println("directory name:", directory) // debugging
 
 	// looking at the filenames in the entire directory:
 	files, err := filepath.Glob(filepath.Join(directory, "ufw.log*"))
@@ -49,9 +53,10 @@ func SelectAndOpen(directory string) (*os.File, error) {
 			latestFile = fileName
 		}
 	}
-
+	// fmt.Println("file name:", latestFile) // debugging
 	file, err := os.Open(latestFile)
 	if err != nil {
+		log.Println("SelectAndOpen() - opening log-file:", err)
 		return nil, err
 	}
 
