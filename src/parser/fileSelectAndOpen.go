@@ -30,6 +30,11 @@ func SelectAndOpen(directory string) (*os.File, error) {
 		return nil, err
 	}
 
+	// debugging:
+	for i, v := range files {
+		fmt.Println("files:", i, v)
+	}
+
 	// fills the map with the names of files corresponding to the pattern
 	for _, filename := range files {
 		fi, err := os.Stat(filename) // getting information about the file
@@ -44,16 +49,30 @@ func SelectAndOpen(directory string) (*os.File, error) {
 		mapFiles[filename] = fi.ModTime()
 	}
 
-	// find the latest file
+	// debugging:
+	for i, v := range mapFiles {
+		fmt.Println("len(mapFiles):", len(mapFiles))
+		fmt.Println("mapFiles:", i, v)
+	}
+	// end debugging
+
+	var latestFile string // variable for storing latest file name
 	latestTime := mapFiles[files[0]]
-	var latestFile string
-	for fileName, tm := range mapFiles {
-		if latestTime.Before(tm) {
-			latestTime = tm
-			latestFile = fileName
+
+	fmt.Println("latestFile:", latestFile)
+
+	// find the latest file
+	if len(mapFiles) > 1 {
+		for fileName, tm := range mapFiles {
+			if latestTime.Before(tm) {
+				latestTime = tm
+				latestFile = fileName
+			}
 		}
 	}
-	// fmt.Println("file name:", latestFile) // debugging
+
+	fmt.Println("file name:", latestFile) // debugging
+
 	file, err := os.Open(latestFile)
 	if err != nil {
 		log.Println("SelectAndOpen() - opening log-file:", err)
