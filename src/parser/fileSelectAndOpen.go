@@ -59,7 +59,8 @@ func SelectAndOpen(directory string) (*os.File, error) {
 	var latestFile string // variable for storing latest file name
 	latestTime := mapFiles[files[0]]
 
-	fmt.Println("latestFile:", latestFile)
+	fmt.Println("files[0]:", files[0])
+	fmt.Println("latestFile:", latestFile) // debugging
 
 	// find the latest file
 	if len(mapFiles) > 1 {
