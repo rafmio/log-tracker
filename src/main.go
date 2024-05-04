@@ -15,7 +15,7 @@ func main() {
 		log.Println("can't set env variable")
 	}
 
-	err = os.Setenv(parser.VarLogFPEnvVarName, "")
+	err = os.Setenv(parser.VarLogFPEnvVarName, "0")
 	if err != nil {
 		log.Println("can't set env variable")
 	}
