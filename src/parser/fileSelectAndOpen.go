@@ -22,17 +22,10 @@ func SelectAndOpen(directory string) (*os.File, error) {
 	// create variable for storing filenames and time
 	var mapFiles = make(map[string]time.Time)
 
-	fmt.Println("directory name:", directory) // debugging
-
 	// looking at the filenames in the entire directory:
 	files, err := filepath.Glob(filepath.Join(directory, "ufw.log*"))
 	if err != nil {
 		return nil, err
-	}
-
-	// debugging:
-	for i, v := range files {
-		fmt.Println("files:", i, v)
 	}
 
 	// fills the map with the names of files corresponding to the pattern
@@ -50,17 +43,19 @@ func SelectAndOpen(directory string) (*os.File, error) {
 	}
 
 	// debugging:
+	fmt.Println("len(mapFiles):", len(mapFiles))
 	for i, v := range mapFiles {
-		fmt.Println("len(mapFiles):", len(mapFiles))
 		fmt.Println("mapFiles:", i, v)
 	}
 	// end debugging
 
 	var latestFile string // variable for storing latest file name
+	latestFile = files[0]
 	latestTime := mapFiles[files[0]]
 
-	fmt.Println("files[0]:", files[0])
+	fmt.Println("files[0]:", files[0])     // debugging
 	fmt.Println("latestFile:", latestFile) // debugging
+	fmt.Println("--------")                // debugging
 
 	// find the latest file
 	if len(mapFiles) > 1 {
@@ -68,10 +63,13 @@ func SelectAndOpen(directory string) (*os.File, error) {
 			if latestTime.Before(tm) {
 				latestTime = tm
 				latestFile = fileName
+				fmt.Println("latestTime:", latestTime) // debugging
+				fmt.Println("latestFile:", latestFile) // debugging
 			}
 		}
 	}
 
+	fmt.Println("---------")              // debugging
 	fmt.Println("file name:", latestFile) // debugging
 
 	file, err := os.Open(latestFile)
