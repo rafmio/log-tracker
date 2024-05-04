@@ -10,8 +10,6 @@ import (
 	"time"
 )
 
-// var mapFiles = make(map[string]time.Time)
-
 var ErrGetStatInfo = errors.New("can't get file info via Stat()")
 
 // Searches for files with a name corresponding to the pattern, selects

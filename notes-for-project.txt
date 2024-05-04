@@ -1,0 +1,14 @@
+Самописные приложения, как правило, инсталлируют в директорию /usr/local/bin
+
+Варианты мест хранения конфигурационных файлов:
+
+Алиса:
+$HOME/.config/your_app_name
+
+GigaChat:
+/etc/application_name
+/etc/default/application_name - альтернативное место
+/etc/myapp/config.yaml
+
+Fabula:
+/etc/myapp
