@@ -2,7 +2,6 @@ package parser
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -40,20 +39,9 @@ func SelectAndOpen(directory string) (*os.File, error) {
 		mapFiles[filename] = fi.ModTime()
 	}
 
-	// debugging:
-	fmt.Println("len(mapFiles):", len(mapFiles))
-	for i, v := range mapFiles {
-		fmt.Println("mapFiles:", i, v)
-	}
-	// end debugging
-
 	var latestFile string // variable for storing latest file name
 	latestFile = files[0]
 	latestTime := mapFiles[files[0]]
-
-	fmt.Println("files[0]:", files[0])     // debugging
-	fmt.Println("latestFile:", latestFile) // debugging
-	fmt.Println("--------")                // debugging
 
 	// find the latest file
 	if len(mapFiles) > 1 {
@@ -61,14 +49,9 @@ func SelectAndOpen(directory string) (*os.File, error) {
 			if latestTime.Before(tm) {
 				latestTime = tm
 				latestFile = fileName
-				fmt.Println("latestTime:", latestTime) // debugging
-				fmt.Println("latestFile:", latestFile) // debugging
 			}
 		}
 	}
-
-	fmt.Println("---------")              // debugging
-	fmt.Println("file name:", latestFile) // debugging
 
 	file, err := os.Open(latestFile)
 	if err != nil {
