@@ -10,25 +10,25 @@ import (
 	_ "github.com/lib/pq" // PostgreSQL driver
 )
 
-// declare the structure of the database connection parameters
-type ConnectDBConfig struct {
-	driverName string
-	user       string
-	dbname     string
-	tableName  string
-	password   string
-	sslmode    string
-}
+// // declare the structure of the database connection parameters
+// type ConnectDBConfig struct {
+// 	driverName string
+// 	user       string
+// 	dbname     string
+// 	tableName  string
+// 	password   string
+// 	sslmode    string
+// }
 
-// initialize ConnectDBConfig with exact values
-var CDBc ConnectDBConfig = ConnectDBConfig{
-	driverName: "postgres",
-	user:       "raf",
-	dbname:     "logtracker",
-	tableName:  "lg_tab_1",
-	password:   "qwq121",
-	sslmode:    "disable",
-}
+// // initialize ConnectDBConfig with exact values
+// var CDBc ConnectDBConfig = ConnectDBConfig{
+// 	driverName: "postgres",
+// 	user:       "raf",
+// 	dbname:     "logtracker",
+// 	tableName:  "lg_tab_1",
+// 	password:   "qwq121",
+// 	sslmode:    "disable",
+// }
 
 // InsertToDb() connect to DB, check if the record exists, if not, insert the record
 func InsertToDb(logEntry parser.LogEntry, cDBc ConnectDBConfig) error {
