@@ -1,0 +1,8 @@
+{
+    "driverName": "postgres",
+    "user": "raf",
+    "dbname": "logtracker",
+    "tableName": "lg_tab_1",
+    "password": "qwq121",
+    "sslmode": "disable"
+}
