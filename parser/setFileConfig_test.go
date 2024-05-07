@@ -26,10 +26,8 @@ func TestReadFileConfig(t *testing.T) {
 	file, err := os.CreateTemp(".", "fileConfig.json")
 	if err != nil {
 		log.Println("error creating file")
-	} else {
-		log.Println("temp file has been created")
 	}
-	// defer os.Remove(file.Name())
+	defer os.Remove(file.Name())
 	defer file.Close()
 
 	jsonData, err := json.MarshalIndent(fileConfigToWrite, "", "    ")
@@ -44,7 +42,7 @@ func TestReadFileConfig(t *testing.T) {
 
 	t.Run("run reading config of filesystem", func(t *testing.T) {
 		// reading the config file
-		fileConfigToRead, err := ReadFileConfig("fileConfig.json")
+		fileConfigToRead, err := ReadFileConfig(file.Name())
 		if err != nil {
 			t.Error("fail to read file:", err.Error())
 		}
