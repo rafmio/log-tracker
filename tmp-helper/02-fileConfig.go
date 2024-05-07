@@ -15,7 +15,7 @@ type FileConfig struct {
 
 func main() {
 	fileConfig := FileConfig{
-		Pattern:        "*.log",
+		Pattern:        "ufw.log*",
 		ExcludePattern: "*.gz",
 		Directory:      "/home/raf/log-tracker/log-files",
 		FilePosition:   "0",

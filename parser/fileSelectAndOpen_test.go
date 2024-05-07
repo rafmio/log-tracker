@@ -27,7 +27,7 @@ func TestSelectAndOpen(t *testing.T) {
 	}
 
 	// construct full path to target test dir
-	envVarPath := filepath.Join(currentDir, tempDir)
+	// envVarPath := filepath.Join(currentDir, tempDir)
 
 	// fill slice with temp filenames (ufw.log*) for range:
 	fileNames := make([]string, 0, 10)
@@ -79,8 +79,13 @@ func TestSelectAndOpen(t *testing.T) {
 	}
 
 	t.Run("run SelectAndOpen()", func(t *testing.T) {
+		// create tmp fileConfig
+		stubFileConfig, err := createTempFileConfig(t)
+		if err != nil {
+			t.Error("creating temp file config:", err.Error())
+		}
 		// call SelectAndOpen():
-		file, _ := SelectAndOpen(envVarPath)
+		file, _ := SelectAndOpen(stubFileConfig)
 		// want := fileNames[2] // 'ufw.log.1' - latest nonempty file
 		want := filepath.Join(currentDir, fileNames[2])
 		gotFileName := file.Name()
@@ -88,4 +93,21 @@ func TestSelectAndOpen(t *testing.T) {
 			t.Errorf("got %s, want %s", gotFileName, want)
 		}
 	})
+}
+
+func createTempFileConfig(t testing.TB) (FileConfig, error) {
+	t.Helper()
+	file, err := createTmpJSONFile(t)
+	if err != nil {
+		return FileConfig{}, err
+	}
+	defer os.Remove(file.Name())
+	defer file.Close()
+
+	fileConfigToRead, err := ReadFileConfig(file.Name())
+	if err != nil {
+		return FileConfig{}, err
+	}
+
+	return fileConfigToRead, nil
 }

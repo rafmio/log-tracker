@@ -15,12 +15,12 @@ var ErrGetStatInfo = errors.New("can't get file info via Stat()")
 // the non-zero and most recent one, and then opens it and returns a pointer
 // to the open file.
 // The target folder is passed to the function from the environment variable
-func SelectAndOpen(directory string) (*os.File, error) {
+func SelectAndOpen(fileConfig FileConfig) (*os.File, error) {
 	// create variable for storing filenames and time
 	var mapFiles = make(map[string]time.Time)
 
 	// looking at the filenames in the entire directory:
-	files, err := filepath.Glob(filepath.Join(directory, "ufw.log*"))
+	files, err := filepath.Glob(filepath.Join(fileConfig.Directory, fileConfig.Pattern))
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func SelectAndOpen(directory string) (*os.File, error) {
 		}
 
 		// exclude archives and empty files
-		if fi.Size() == 0 || strings.Contains(filename, ".gz") {
+		if fi.Size() == 0 || strings.Contains(filename, fileConfig.ExcludePattern) {
 			continue
 		}
 		mapFiles[filename] = fi.ModTime()

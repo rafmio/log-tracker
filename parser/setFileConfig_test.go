@@ -7,38 +7,21 @@ import (
 	"testing"
 )
 
-type StubFileConfig struct {
-	Pattern        string `json:"pattern"`
-	ExcludePattern string `json:"excludePattern"`
-	Directory      string `json:"directory"`
-	FilePosition   string `json:"filePosition"`
+var fileConfigToWrite = FileConfig{
+	Pattern:        "*.log",
+	ExcludePattern: "*.gz",
+	Directory:      "/home/raf/log-tracker/log-files",
+	FilePosition:   "0",
 }
 
 func TestReadFileConfig(t *testing.T) {
 	// creating temp json config file
-	fileConfigToWrite := StubFileConfig{
-		Pattern:        "*.log",
-		ExcludePattern: "*.gz",
-		Directory:      "/home/raf/log-tracker/log-files",
-		FilePosition:   "0",
-	}
-
-	file, err := os.CreateTemp(".", "fileConfig.json")
+	file, err := createTmpJSONFile(t)
 	if err != nil {
-		log.Println("error creating file")
+		t.Error("creating tmp JOSN file:", err.Error())
 	}
 	defer os.Remove(file.Name())
 	defer file.Close()
-
-	jsonData, err := json.MarshalIndent(fileConfigToWrite, "", "    ")
-	if err != nil {
-		log.Println("error marshaling json")
-	}
-
-	_, err = file.Write(jsonData)
-	if err != nil {
-		log.Println("error writing to file")
-	}
 
 	t.Run("run reading config of filesystem", func(t *testing.T) {
 		// reading the config file
@@ -61,4 +44,27 @@ func TestReadFileConfig(t *testing.T) {
 		}
 
 	})
+}
+
+func createTmpJSONFile(t testing.TB) (*os.File, error) {
+	t.Helper()
+	file, err := os.CreateTemp(".", "fileConfig.json")
+	if err != nil {
+		log.Println("error creating file")
+		return nil, err
+	}
+
+	jsonData, err := json.MarshalIndent(fileConfigToWrite, "", "    ")
+	if err != nil {
+		log.Println("error marshaling json")
+		return nil, err
+	}
+
+	_, err = file.Write(jsonData)
+	if err != nil {
+		log.Println("error writing to file")
+		return nil, err
+	}
+
+	return file, nil
 }
