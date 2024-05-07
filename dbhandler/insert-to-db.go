@@ -43,8 +43,6 @@ func InsertToDb(logEntry parser.LogEntry, cDBc ConnectDBConfig) error {
 	if err != nil {
 		log.Println(err.Error())
 		return err
-	} else {
-		log.Println("db has been opened")
 	}
 	defer db.Close()
 
