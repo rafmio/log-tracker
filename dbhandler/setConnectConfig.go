@@ -1,5 +1,10 @@
 package dbhandler
 
+import (
+	"encoding/json"
+	"os"
+)
+
 var filepath string = "../config/databaseConfig.json"
 
 // declare the structure of the database connection parameters
@@ -23,5 +28,17 @@ type ConnectDBConfig struct {
 // }
 
 func LoadDatabaseConfig(filepath string) (ConnectDBConfig, error) {
+	data, err := os.ReadFile(filepath)
+	if err != nil {
+		return ConnectDBConfig{}, err
+	}
 
+	var CDBc ConnectDBConfig
+
+	err = json.Unmarshal(data, &CDBc)
+	if err != nil {
+		return ConnectDBConfig{}, err
+	}
+
+	return CDBc, nil
 }
