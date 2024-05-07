@@ -2,19 +2,20 @@ package dbhandler
 
 import (
 	"encoding/json"
+	"log"
 	"os"
 )
 
-var filepath string = "../config/databaseConfig.json"
+var ConfDBFilePath string = "/home/raf/log-tracker/config/databaseConfig.json"
 
 // declare the structure of the database connection parameters
 type ConnectDBConfig struct {
-	driverName string
-	user       string
-	dbname     string
-	tableName  string
-	password   string
-	sslmode    string
+	DriverName string
+	User       string
+	Dbname     string
+	TableName  string
+	Password   string
+	Sslmode    string
 }
 
 // initialize ConnectDBConfig with exact values
@@ -29,9 +30,10 @@ type ConnectDBConfig struct {
 
 // Extracts the settings from the json configuration file and returns
 // the ConnectDBConfig structure
-func LoadDatabaseConfig(filepath string) (ConnectDBConfig, error) {
-	data, err := os.ReadFile(filepath)
+func LoadDatabaseConfig(ConfDBFilePath string) (ConnectDBConfig, error) {
+	data, err := os.ReadFile(ConfDBFilePath)
 	if err != nil {
+		log.Println("reading DB configs:", err)
 		return ConnectDBConfig{}, err
 	}
 
@@ -43,12 +45,4 @@ func LoadDatabaseConfig(filepath string) (ConnectDBConfig, error) {
 	}
 
 	return CDBc, nil
-}
-
-// Converts the fields of the Connect DB Config structure to
-// the string 'dataSourceName'
-func (cDBc ConnectDBConfig) GetDataSourceName() string {
-	dataSourceName := "user=" + cDBc.user + " dbname=" + cDBc.dbname + " password=" + cDBc.password + " sslmode=" + cDBc.sslmode
-
-	return dataSourceName
 }

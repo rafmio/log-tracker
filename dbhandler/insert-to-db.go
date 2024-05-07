@@ -10,7 +10,7 @@ import (
 	_ "github.com/lib/pq" // PostgreSQL driver
 )
 
-// // declare the structure of the database connection parameters
+// declare the structure of the database connection parameters
 // type ConnectDBConfig struct {
 // 	driverName string
 // 	user       string
@@ -20,7 +20,7 @@ import (
 // 	sslmode    string
 // }
 
-// // initialize ConnectDBConfig with exact values
+// initialize ConnectDBConfig with exact values
 // var CDBc ConnectDBConfig = ConnectDBConfig{
 // 	driverName: "postgres",
 // 	user:       "raf",
@@ -33,13 +33,13 @@ import (
 // InsertToDb() connect to DB, check if the record exists, if not, insert the record
 func InsertToDb(logEntry parser.LogEntry, cDBc ConnectDBConfig) error {
 	dataSourceName := fmt.Sprintf("user=%s dbname=%s password=%s sslmode=%s",
-		cDBc.user,
-		cDBc.dbname,
-		cDBc.password,
-		cDBc.sslmode,
+		cDBc.User,
+		cDBc.Dbname,
+		cDBc.Password,
+		cDBc.Sslmode,
 	)
 
-	db, err := sql.Open(cDBc.driverName, dataSourceName)
+	db, err := sql.Open(cDBc.DriverName, dataSourceName)
 	if err != nil {
 		log.Println(err.Error())
 		return err
@@ -48,7 +48,7 @@ func InsertToDb(logEntry parser.LogEntry, cDBc ConnectDBConfig) error {
 	}
 	defer db.Close()
 
-	doesRecordExists, err := CheckIfRecordExists(db, logEntry)
+	doesRecordExists, err := CheckIfRecordExists(db, cDBc.TableName, logEntry)
 	if err != nil {
 		log.Println(err.Error())
 		return err
@@ -60,7 +60,7 @@ func InsertToDb(logEntry parser.LogEntry, cDBc ConnectDBConfig) error {
 
 	// preparing the query for INSERT
 	query := fmt.Sprintf("INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s, %s) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
-		cDBc.tableName,
+		cDBc.TableName,
 		"tmstmp",
 		"srcip",
 		"len",
@@ -97,10 +97,10 @@ func InsertToDb(logEntry parser.LogEntry, cDBc ConnectDBConfig) error {
 }
 
 // check if the record exists
-func CheckIfRecordExists(db *sql.DB, logEntry parser.LogEntry) (bool, error) {
+func CheckIfRecordExists(db *sql.DB, tableName string, logEntry parser.LogEntry) (bool, error) {
 	// preparing the query for SELECT
 	query := fmt.Sprintf("SELECT * FROM %s WHERE %s AND %s AND %s AND %s AND %s AND %s AND %s AND %s",
-		CDBc.tableName,
+		tableName,
 		"tmstmp = $1",
 		"srcip = $2",
 		"len = $3",

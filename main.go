@@ -61,7 +61,7 @@ func main() {
 		log.Println(err)
 	}
 
-	CDBc, err := dbhandler.LoadDatabaseConfig()
+	CDBc, err := dbhandler.LoadDatabaseConfig(dbhandler.ConfDBFilePath)
 	if err != nil {
 		log.Println(err)
 	}
