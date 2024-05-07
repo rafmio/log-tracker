@@ -61,13 +61,18 @@ func main() {
 		log.Println(err)
 	}
 
+	CDBc, err := dbhandler.LoadDatabaseConfig()
+	if err != nil {
+		log.Println(err)
+	}
+
 	for _, logLine := range logLines {
 		logEntry, err := parser.ParseLog(logLine)
 		if err != nil {
 			log.Println(err)
 		}
 
-		err = dbhandler.InsertToDb(logEntry, dbhandler.CDBc)
+		err = dbhandler.InsertToDb(logEntry, CDBc)
 		if err != nil {
 			log.Println(err)
 		}

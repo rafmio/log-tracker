@@ -27,6 +27,8 @@ type ConnectDBConfig struct {
 // 	sslmode:    "disable",
 // }
 
+// Extracts the settings from the json configuration file and returns
+// the ConnectDBConfig structure
 func LoadDatabaseConfig(filepath string) (ConnectDBConfig, error) {
 	data, err := os.ReadFile(filepath)
 	if err != nil {
@@ -41,4 +43,12 @@ func LoadDatabaseConfig(filepath string) (ConnectDBConfig, error) {
 	}
 
 	return CDBc, nil
+}
+
+// Converts the fields of the Connect DB Config structure to
+// the string 'dataSourceName'
+func (cDBc ConnectDBConfig) GetDataSourceName() string {
+	dataSourceName := "user=" + cDBc.user + " dbname=" + cDBc.dbname + " password=" + cDBc.password + " sslmode=" + cDBc.sslmode
+
+	return dataSourceName
 }
