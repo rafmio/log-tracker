@@ -93,6 +93,7 @@ func TestSelectAndOpen(t *testing.T) {
 			t.Errorf("got %s, want %s", gotFileName, want)
 		}
 	})
+
 }
 
 func createTempFileConfig(t testing.TB) (FileConfig, error) {

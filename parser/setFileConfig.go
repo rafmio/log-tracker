@@ -5,6 +5,7 @@ import (
 	"os"
 )
 
+// Stores the values needed to work with files, directories - paths, file position, name pattern
 type FileConfig struct {
 	Pattern        string `json:"pattern"`
 	ExcludePattern string `json:"excludePattern"`
