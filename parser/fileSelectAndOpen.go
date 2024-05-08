@@ -16,6 +16,16 @@ var ErrGetStatInfo = errors.New("can't get file info via Stat()")
 // to the open file.
 // The target folder is passed to the function from the environment variable
 func SelectAndOpen(fileConfig FileConfig) (*os.File, error) {
+	// check if FileConfig's filelds are empty
+	if fileConfig.Pattern == "" || fileConfig.Directory == "" || fileConfig.ExcludePattern == "" {
+		return nil, errors.New("fileConfig's fields are empty")
+	}
+
+	// check if the directory exists
+	if _, err := os.Stat(fileConfig.Directory); os.IsNotExist(err) {
+		return nil, errors.New("directory doesn't exist")
+	}
+
 	// create variable for storing filenames and time
 	var mapFiles = make(map[string]time.Time)
 

@@ -3,6 +3,7 @@ package parser
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 )
@@ -58,7 +59,7 @@ func ParseLog(logLine string) (LogEntry, error) {
 	timeStampStr := yearStr + "-" + month + "-" + tokens[1] + " " + tokens[2]
 	timeStamp, err := time.Parse("2006-01-02 15:04:05", timeStampStr)
 	if err != nil {
-		fmt.Println("can't parse time") // TODO: make log system
+		log.Println("can't parse time") // TODO: make log system
 		return LogEntry{}, ErrParseTimeStamp
 	}
 	result.TmStmp = timeStamp

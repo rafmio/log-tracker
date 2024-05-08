@@ -18,7 +18,7 @@ func TestReadFileConfig(t *testing.T) {
 	// creating temp json config file
 	file, err := createTmpJSONFile(t)
 	if err != nil {
-		t.Error("creating tmp JOSN file:", err.Error())
+		t.Error("creating tmp JSON file:", err.Error())
 	}
 	defer os.Remove(file.Name())
 	defer file.Close()
