@@ -8,7 +8,7 @@ import (
 )
 
 var fileConfigToWrite = FileConfig{
-	Pattern:        "*.log",
+	Pattern:        "*ufw.log*",
 	ExcludePattern: "*.gz",
 	Directory:      "/home/raf/log-tracker/log-files",
 	FilePosition:   "0",

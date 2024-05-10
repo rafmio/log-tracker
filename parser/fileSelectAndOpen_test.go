@@ -21,10 +21,10 @@ func TestSelectAndOpen(t *testing.T) {
 
 	// the target directory will be set at env.
 	// set environment variable for path
-	currentDir, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("getting current dir: %v", err)
-	}
+	// currentDir, err := os.Getwd()
+	// if err != nil {
+	// 	t.Fatalf("getting current dir: %v", err)
+	// }
 
 	// construct full path to target test dir
 	// envVarPath := filepath.Join(currentDir, tempDir)
@@ -79,15 +79,18 @@ func TestSelectAndOpen(t *testing.T) {
 	}
 
 	t.Run("run SelectAndOpen()", func(t *testing.T) {
-		// create tmp fileConfig
-		stubFileConfig, err := createTempFileConfig(t)
-		if err != nil {
-			t.Error("creating temp file config:", err.Error())
+		var fileConfig = FileConfig{
+			Pattern:        "*ufw.log*",
+			ExcludePattern: "*.gz",
+			// Directory:      "/home/raf/log-tracker/log-files",
+			Directory:    tempDir,
+			FilePosition: "0",
 		}
 		// call SelectAndOpen():
-		file, _ := SelectAndOpen(stubFileConfig)
+		file, _ := SelectAndOpen(fileConfig)
 		// want := fileNames[2] // 'ufw.log.1' - latest nonempty file
-		want := filepath.Join(currentDir, fileNames[2])
+		// want := filepath.Join(tempDir, fileNames[2])
+		want := fileNames[2]
 		gotFileName := file.Name()
 		if gotFileName != want {
 			t.Errorf("got %s, want %s", gotFileName, want)
@@ -96,19 +99,19 @@ func TestSelectAndOpen(t *testing.T) {
 
 }
 
-func createTempFileConfig(t testing.TB) (FileConfig, error) {
-	t.Helper()
-	file, err := createTmpJSONFile(t)
-	if err != nil {
-		return FileConfig{}, err
-	}
-	defer os.Remove(file.Name())
-	defer file.Close()
+// func createTempFileConfig(t testing.TB) (FileConfig, error) {
+// 	t.Helper()
+// 	file, err := createTmpJSONFile(t)
+// 	if err != nil {
+// 		return FileConfig{}, err
+// 	}
+// 	defer os.Remove(file.Name())
+// 	defer file.Close()
 
-	fileConfigToRead, err := ReadFileConfig(file.Name())
-	if err != nil {
-		return FileConfig{}, err
-	}
+// 	fileConfigToRead, err := ReadFileConfig(file.Name())
+// 	if err != nil {
+// 		return FileConfig{}, err
+// 	}
 
-	return fileConfigToRead, nil
-}
+// 	return fileConfigToRead, nil
+// }
