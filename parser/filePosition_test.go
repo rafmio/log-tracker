@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -129,23 +130,6 @@ func TestIfFPCorrect(t *testing.T) {
 	}
 }
 
-// func TestGetFPFromEnv(t *testing.T) {
-// 	for i := 1; i <= 10; i++ {
-// 		t.Run("get file position from env", func(t *testing.T) {
-// 			want := i * 1000
-// 			err := os.Setenv(VarLogFPEnvVarName, strconv.Itoa(want))
-// 			if err != nil {
-// 				t.Fatalf("os.Setenv(): %v", err)
-// 			}
-// 			fp := new(FilePosition)
-// 			got := fp.GetFPFromEnv()
-
-//				if got != int64(want) {
-//					t.Errorf("GetFPFromEnv(): got %v, want %v", got, want)
-//				}
-//			})
-//		}
-//	}
 func TestGetFPFromEnv(t *testing.T) {
 	for i := 1; i <= 10; i++ {
 		t.Run("get the file position from env", func(t *testing.T) {
@@ -179,6 +163,26 @@ func TestWriteFPToEnv(t *testing.T) {
 			if got != strconv.Itoa(want) {
 				t.Errorf("WriteFPToEnv(): got %v, want %v", got, want)
 			}
+		})
+	}
+}
+
+func TestReadFPFromFile(t *testing.T) {
+	// creating a temporary file for test reading
+	for i := 0; i < 100; i++ {
+		t.Run(fmt.Sprintf("passing file position: %d", i), func(t *testing.T) {
+			file, err := createTmpJSONFile(t)
+			if err != nil {
+				t.Fatalf("creating temp file: %v", err)
+			}
+			defer os.Remove(file)
+			defer file.Close()
+
+			fileConfig, err := ReadFileConfig(file.Name())
+			if err != nil {
+				t.Fatalf("reading file config: %v", err)
+			}
+
 		})
 	}
 }

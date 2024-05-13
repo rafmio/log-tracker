@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"encoding/json"
 	"errors"
 	"io"
 	"log"
@@ -73,4 +74,22 @@ func (fp *FilePosition) WriteFPToEnv() error {
 	}
 
 	return nil
+}
+
+func (fp *FilePosition) ReadFPFromFile(fileName string) {
+	data, err := os.ReadFile(fileName)
+	if err != nil {
+		log.Println("reading file position:", err.Error())
+		return
+	}
+
+	var fileConfig FileConfig
+
+	err = json.Unmarshal(data, &fileConfig)
+	if err != nil {
+		log.Println("unmarshal data:", err.Error())
+		return
+	}
+
+	fp.Fp, err = strconv.ParseInt(fileConfig.FilePosition, 10, 64)
 }

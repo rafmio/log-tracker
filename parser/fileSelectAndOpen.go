@@ -49,8 +49,8 @@ func SelectAndOpen(fileConfig FileConfig) (*os.File, error) {
 		mapFiles[filename] = fi.ModTime()
 	}
 
-	var latestFile string // variable for storing latest file name
-	latestFile = files[0]
+	// var latestFile string // variable for storing latest file name
+	latestFile := files[0]
 	latestTime := mapFiles[files[0]]
 
 	// find the latest file
