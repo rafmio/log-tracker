@@ -76,11 +76,11 @@ func (fp *FilePosition) WriteFPToEnv() error {
 	return nil
 }
 
-func (fp *FilePosition) ReadFPFromFile(fileName string) {
+func (fp *FilePosition) ReadFPFromFile(fileName string) error {
 	data, err := os.ReadFile(fileName)
 	if err != nil {
 		log.Println("reading file position:", err.Error())
-		return
+		return err
 	}
 
 	var fileConfig FileConfig
@@ -88,8 +88,10 @@ func (fp *FilePosition) ReadFPFromFile(fileName string) {
 	err = json.Unmarshal(data, &fileConfig)
 	if err != nil {
 		log.Println("unmarshal data:", err.Error())
-		return
+		return err
 	}
 
 	fp.Fp, err = strconv.ParseInt(fileConfig.FilePosition, 10, 64)
+
+	return nil
 }

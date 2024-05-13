@@ -1,8 +1,10 @@
 package parser
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -168,21 +170,40 @@ func TestWriteFPToEnv(t *testing.T) {
 }
 
 func TestReadFPFromFile(t *testing.T) {
-	// creating a temporary file for test reading
-	for i := 0; i < 100; i++ {
+	for i := 1; i < 30; i++ {
 		t.Run(fmt.Sprintf("passing file position: %d", i), func(t *testing.T) {
-			file, err := createTmpJSONFile(t)
+			// creating a temporary file
+			file, err := os.CreateTemp(".", "fileConfig.json")
 			if err != nil {
 				t.Fatalf("creating temp file: %v", err)
 			}
-			defer os.Remove(file)
-			defer file.Close()
 
-			fileConfig, err := ReadFileConfig(file.Name())
+			defer os.Remove(file.Name()) // remove the temp file after test
+
+			fileConfig := fileConfigToWrite // using existing instance
+			fileConfig.FilePosition = strconv.Itoa(i)
+
+			jsonData, err := json.MarshalIndent(fileConfig, "", "    ")
 			if err != nil {
-				t.Fatalf("reading file config: %v", err)
+				log.Fatal("error marshaling json")
 			}
 
+			_, err = file.Write(jsonData)
+			if err != nil {
+				log.Fatal("error writing to file")
+			}
+
+			defer file.Close()
+
+			fp := new(FilePosition) // creating a stub fp for test apply method
+			err = fp.ReadFPFromFile(file.Name())
+			if err != nil {
+				t.Fatalf("ReadFPFromFile(): %v", err)
+			}
+
+			if fp.Fp != int64(i) {
+				t.Errorf("ReadFPFromFile(): got %v, want %v", fp.Fp, i)
+			}
 		})
 	}
 }
