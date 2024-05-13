@@ -14,3 +14,15 @@ Fabula:
 /etc/myapp
 
 Поизучав структурирование проектов на Go узнал, что есть вариант хранения конфигов в директории config
+
+-----
+reg.ru: подключение по SSH:
+https://help.reg.ru/support/servery-vps/oblachnyye-servery/rabota-s-serverom/ssh-tunneli-nastroyka-i-primery-prakticheskogo-ispolzovaniya#1
+
+
+1.ssh-keygen -t rsa
+2.Пропускаем все шаги
+3.ssh-copy-id user@yourserver (в моем случае ssh-copy-id root@194.58.102.129)
+4.ssh root@194.58.102.129
+
+И никаких ключей не нужно добавлять в личном кабинете reg.ru
