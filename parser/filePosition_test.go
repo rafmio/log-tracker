@@ -132,42 +132,42 @@ func TestIfFPCorrect(t *testing.T) {
 	}
 }
 
-func TestGetFPFromEnv(t *testing.T) {
-	for i := 1; i <= 10; i++ {
-		t.Run("get the file position from env", func(t *testing.T) {
-			want := i * 1000
-			err := os.Setenv(VarLogFPEnvVarName, strconv.Itoa(want))
-			if err != nil {
-				t.Fatalf("os.Setenv(): %v", err)
-			}
-			fp := new(FilePosition)
-			_ = fp.GetFPFromEnv()
+// func TestGetFPFromEnv(t *testing.T) {
+// 	for i := 1; i <= 10; i++ {
+// 		t.Run("get the file position from env", func(t *testing.T) {
+// 			want := i * 1000
+// 			err := os.Setenv(VarLogFPEnvVarName, strconv.Itoa(want))
+// 			if err != nil {
+// 				t.Fatalf("os.Setenv(): %v", err)
+// 			}
+// 			fp := new(FilePosition)
+// 			_ = fp.GetFPFromEnv()
 
-			if fp.Fp != int64(want) {
-				t.Errorf("GetFPFromEnv(): got %v, want %v", fp.Fp, want)
-			}
-		})
-	}
-}
+// 			if fp.Fp != int64(want) {
+// 				t.Errorf("GetFPFromEnv(): got %v, want %v", fp.Fp, want)
+// 			}
+// 		})
+// 	}
+// }
 
-func TestWriteFPToEnv(t *testing.T) {
-	for i := 1; i <= 10; i++ {
-		t.Run("write file position to env", func(t *testing.T) {
-			want := i * 1000
-			fp := FilePosition{
-				Fp: int64(want),
-			}
-			err := fp.WriteFPToEnv()
-			if err != nil {
-				t.Fatalf("WriteFPToEnv(): %v", err)
-			}
-			got := os.Getenv(VarLogFPEnvVarName)
-			if got != strconv.Itoa(want) {
-				t.Errorf("WriteFPToEnv(): got %v, want %v", got, want)
-			}
-		})
-	}
-}
+// func TestWriteFPToEnv(t *testing.T) {
+// 	for i := 1; i <= 10; i++ {
+// 		t.Run("write file position to env", func(t *testing.T) {
+// 			want := i * 1000
+// 			fp := FilePosition{
+// 				Fp: int64(want),
+// 			}
+// 			err := fp.WriteFPToEnv()
+// 			if err != nil {
+// 				t.Fatalf("WriteFPToEnv(): %v", err)
+// 			}
+// 			got := os.Getenv(VarLogFPEnvVarName)
+// 			if got != strconv.Itoa(want) {
+// 				t.Errorf("WriteFPToEnv(): got %v, want %v", got, want)
+// 			}
+// 		})
+// 	}
+// }
 
 func TestReadFPFromFile(t *testing.T) {
 	for i := 1; i < 30; i++ {

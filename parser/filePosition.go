@@ -11,8 +11,7 @@ import (
 
 var ErrIncorrectFilePosition = errors.New("the file position is larger than file size")
 
-var VarLogFPEnvVarName string = "VARLOGFP"
-
+// var VarLogFPEnvVarName string = "VARLOGFP"
 // TODO: consider how to set the environment variable differently
 
 type FilePosition struct {
@@ -47,35 +46,37 @@ func (fp *FilePosition) IfFPCorrect(file *os.File) (bool, error) {
 	return true, nil
 }
 
-func (fp *FilePosition) GetFPFromEnv() error {
-	fpStr := os.Getenv(VarLogFPEnvVarName)
-	if fpStr == "" {
-		log.Printf("the %s environment variable was not found. The file position was set to 0", VarLogFPEnvVarName)
-		return nil
-	}
+// func (fp *FilePosition) GetFPFromEnv() error {
+// 	fpStr := os.Getenv(VarLogFPEnvVarName)
+// 	if fpStr == "" {
+// 		log.Printf("the %s environment variable was not found. The file position was set to 0", VarLogFPEnvVarName)
+// 		return nil
+// 	}
 
-	// convert fpStr (env var value) from string to int64
-	fpInt64, err := strconv.ParseInt(fpStr, 10, 64)
-	if err != nil {
-		log.Println("can't convert string go integer, the file position was set to 0")
-		return err
-	}
+// 	// convert fpStr (env var value) from string to int64
+// 	fpInt64, err := strconv.ParseInt(fpStr, 10, 64)
+// 	if err != nil {
+// 		log.Println("can't convert string go integer, the file position was set to 0")
+// 		return err
+// 	}
 
-	fp.Fp = fpInt64
+// 	fp.Fp = fpInt64
 
-	return nil
-}
+// 	return nil
+// }
 
-// WriteFPToEnv writes file position to environment to VARLOGFP
-func (fp *FilePosition) WriteFPToEnv() error {
-	err := os.Setenv(VarLogFPEnvVarName, strconv.Itoa(int(fp.Fp)))
-	if err != nil {
-		return err
-	}
+// // WriteFPToEnv writes file position to environment to VARLOGFP
+// func (fp *FilePosition) WriteFPToEnv() error {
+// 	err := os.Setenv(VarLogFPEnvVarName, strconv.Itoa(int(fp.Fp)))
+// 	if err != nil {
+// 		return err
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
+// the method reads the file position from the configuration file
+// and writes it to the FilePosition structure
 func (fp *FilePosition) ReadFPFromFile(fileName string) error {
 	data, err := os.ReadFile(fileName)
 	if err != nil {
