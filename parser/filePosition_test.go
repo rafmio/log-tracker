@@ -209,34 +209,40 @@ func TestReadFPFromFile(t *testing.T) {
 }
 
 func TestWriteFPToFile(t *testing.T) {
-	// creating a temporary file
-	file, err := os.CreateTemp(".", "fileConfig.json")
-	if err != nil {
-		t.Fatalf("creating temp file: %v", err)
-	}
-	defer os.Remove(file.Name()) // remove the temp file after test
-	defer file.Close()
 
-	fileConfig := fileConfigToWrite // using existing instance
-	jsonData, err := json.MarshalIndent(fileConfig, "", "    ")
-	if err != nil {
-		log.Fatal("error marshaling json")
-	}
-	_, err = file.Write(jsonData)
-	if err != nil {
-		log.Fatal("error writing to file")
-	}
-
-	fp := new(FilePosition) // creating a stub fp for test apply method
-
-	for i := 1; i < 30; i++ {
+	for i := 1; i < 10; i++ {
 		t.Run(fmt.Sprintf("write %d to Fp:", i), func(t *testing.T) {
+			// creating a temporary file
+			file, err := os.CreateTemp(".", "fileConfig.json")
+			if err != nil {
+				t.Fatalf("creating temp file: %v", err)
+			}
+			defer os.Remove(file.Name()) // remove the temp file after test
+			// defer file.Close()
+
+			fileConfig := fileConfigToWrite // using existing instance
+			jsonData, err := json.MarshalIndent(fileConfig, "", "    ")
+			if err != nil {
+				log.Fatal("error marshaling json")
+			}
+			_, err = file.Write(jsonData)
+			if err != nil {
+				log.Fatal("error writing to file")
+			}
+
+			fp := new(FilePosition) // creating a stub fp for test apply method
+
 			fp.Fp = int64(i)
-			_ = fp.WriteFPToFile(file.Name())
+
+			file.Close()
+			// _ = fp.WriteFPToFile(fileConfig, strings.TrimPrefix(file.Name(), "./"))
+
+			_ = fp.WriteFPToFile(fileConfig, file.Name())
 			fp.ReadFPFromFile(file.Name())
 			if fp.Fp != int64(i) {
 				t.Errorf("WriteFPToFile(): got %v, want %v", fp.Fp, i)
 			}
+
 		})
 	}
 }

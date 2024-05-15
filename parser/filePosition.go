@@ -97,6 +97,30 @@ func (fp *FilePosition) ReadFPFromFile(fileName string) error {
 	return nil
 }
 
-func (fp *FilePosition) WriteFPToFile(fileName string) error {
+func (fp *FilePosition) WriteFPToFile(fileConfig FileConfig, fileName string) error {
 
+	file, err := os.Open(fileName)
+	if err != nil {
+		log.Println("WriteFPToFile(), error opening file", err.Error())
+		return err
+	} else {
+		log.Println("file has been opened:", file.Name())
+		// fmt.Printf("Type of 'file': %T\n", file)
+	}
+	defer file.Close()
+
+	fileConfig.FilePosition = strconv.Itoa(int(fp.Fp))
+	jsonData, err := json.MarshalIndent(fileConfig, "", "    ")
+	if err != nil {
+		log.Println("error marshaling json")
+		return err
+	}
+
+	_, err = file.Write(jsonData)
+	if err != nil {
+		log.Println("WriteFPToFile(), error writing to file", err)
+		return err
+	}
+
+	return nil
 }
