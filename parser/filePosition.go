@@ -96,3 +96,7 @@ func (fp *FilePosition) ReadFPFromFile(fileName string) error {
 
 	return nil
 }
+
+func (fp *FilePosition) WriteFPToFile(fileName string) error {
+
+}
