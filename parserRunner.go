@@ -44,4 +44,11 @@ func ParserRunner() error {
 		return err
 	}
 
+	// find the file position after reading
+	err = fp.FindFP(file)
+	if err != nil {
+		return err
+	}
+
+	// write the value of file position to the configuration file
 }
