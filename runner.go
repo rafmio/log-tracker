@@ -1,29 +1,32 @@
-package parser
+package main
 
 import (
 	"log"
+	"logtracker/dbhandler"
+	"logtracker/parser"
 	"strconv"
 )
 
 func ParserRunner() error {
 	// set path to config file
 	fileConfigName := "/home/raf/log-tracker/config/fileConfig.json"
+	fileDBConfigName := "/home/raf/log-tracker/config/databaseConfig.json"
 
 	// extracting configuration
-	fileConfig, err := ReadFileConfig(fileConfigName)
+	fileConfig, err := parser.ReadFileConfig(fileConfigName)
 	if err != nil {
 		return err
 	}
 
 	// select and open file
-	file, err := SelectAndOpen(fileConfig)
+	file, err := parser.SelectAndOpen(fileConfig)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
 	// initialize the file position
-	fp := new(FilePosition)
+	fp := new(parser.FilePosition)
 	fpInt, err := strconv.Atoi(fileConfig.FilePosition)
 	fp.Fp = int64(fpInt)
 
@@ -39,7 +42,7 @@ func ParserRunner() error {
 	}
 
 	// read the log-file
-	logLinesSls, err := FileReader(file, fp.Fp)
+	logLinesSls, err := parser.FileReader(file, fp.Fp)
 	if err != nil {
 		return err
 	}
@@ -51,4 +54,27 @@ func ParserRunner() error {
 	}
 
 	// write the value of file position to the configuration file
+	err = fp.WriteFPToFile(fileConfig, fileConfigName)
+	if err != nil {
+		return err
+	}
+
+	CDBc, err := dbhandler.LoadDatabaseConfig(fileDBConfigName)
+	if err != nil {
+		log.Println(err)
+	}
+
+	for _, logLine := range logLinesSls {
+		logEntry, err := parser.ParseLog(logLine)
+		if err != nil {
+			log.Println(err)
+		}
+
+		err = dbhandler.InsertToDb(logEntry, CDBc)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+
+	return nil
 }

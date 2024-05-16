@@ -2,5 +2,5 @@
     "pattern": "ufw.log*",
     "excludePattern": "*.gz",
     "directory": "/home/raf/log-tracker/log-files",
-    "filePosition": "0"
+    "filePosition": "26462"
 }
