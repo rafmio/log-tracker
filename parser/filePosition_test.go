@@ -132,43 +132,6 @@ func TestIfFPCorrect(t *testing.T) {
 	}
 }
 
-// func TestGetFPFromEnv(t *testing.T) {
-// 	for i := 1; i <= 10; i++ {
-// 		t.Run("get the file position from env", func(t *testing.T) {
-// 			want := i * 1000
-// 			err := os.Setenv(VarLogFPEnvVarName, strconv.Itoa(want))
-// 			if err != nil {
-// 				t.Fatalf("os.Setenv(): %v", err)
-// 			}
-// 			fp := new(FilePosition)
-// 			_ = fp.GetFPFromEnv()
-
-// 			if fp.Fp != int64(want) {
-// 				t.Errorf("GetFPFromEnv(): got %v, want %v", fp.Fp, want)
-// 			}
-// 		})
-// 	}
-// }
-
-// func TestWriteFPToEnv(t *testing.T) {
-// 	for i := 1; i <= 10; i++ {
-// 		t.Run("write file position to env", func(t *testing.T) {
-// 			want := i * 1000
-// 			fp := FilePosition{
-// 				Fp: int64(want),
-// 			}
-// 			err := fp.WriteFPToEnv()
-// 			if err != nil {
-// 				t.Fatalf("WriteFPToEnv(): %v", err)
-// 			}
-// 			got := os.Getenv(VarLogFPEnvVarName)
-// 			if got != strconv.Itoa(want) {
-// 				t.Errorf("WriteFPToEnv(): got %v, want %v", got, want)
-// 			}
-// 		})
-// 	}
-// }
-
 func TestReadFPFromFile(t *testing.T) {
 	for i := 1; i < 30; i++ {
 		t.Run(fmt.Sprintf("passing file position: %d", i), func(t *testing.T) {
@@ -210,7 +173,7 @@ func TestReadFPFromFile(t *testing.T) {
 
 func TestWriteFPToFile(t *testing.T) {
 
-	for i := 1; i < 10; i++ {
+	for i := 1; i < 10_000; i = i + 1024 {
 		t.Run(fmt.Sprintf("write %d to Fp:", i), func(t *testing.T) {
 			// creating a temporary file
 			file, err := os.CreateTemp(".", "fileConfig.json")
@@ -221,6 +184,7 @@ func TestWriteFPToFile(t *testing.T) {
 			// defer file.Close()
 
 			fileConfig := fileConfigToWrite // using existing instance
+			// fileConfig.FilePosition = strconv.Itoa(i)
 			jsonData, err := json.MarshalIndent(fileConfig, "", "    ")
 			if err != nil {
 				log.Fatal("error marshaling json")
@@ -229,20 +193,35 @@ func TestWriteFPToFile(t *testing.T) {
 			if err != nil {
 				log.Fatal("error writing to file")
 			}
+			err = file.Close()
+			if err != nil {
+				t.Fatalf("file.Close(): %v", err)
+			}
 
 			fp := new(FilePosition) // creating a stub fp for test apply method
 
 			fp.Fp = int64(i)
 
-			file.Close()
-			// _ = fp.WriteFPToFile(fileConfig, strings.TrimPrefix(file.Name(), "./"))
-
-			_ = fp.WriteFPToFile(fileConfig, file.Name())
-			fp.ReadFPFromFile(file.Name())
-			if fp.Fp != int64(i) {
-				t.Errorf("WriteFPToFile(): got %v, want %v", fp.Fp, i)
+			err = fp.WriteFPToFile(fileConfig, file.Name())
+			if err != nil {
+				t.Fatalf("WriteFPToFile(): %v", err)
 			}
 
+			fpForRead := new(FilePosition)
+			fpForRead.ReadFPFromFile(file.Name())
+			if fpForRead.Fp != int64(i) {
+				t.Errorf("WriteFPToFile(): got %v, want %v", fp.Fp, i)
+			}
 		})
 	}
+
+	t.Run("pass incorrect file name", func(t *testing.T) {
+		fp := new(FilePosition)
+		fp.Fp = int64(128)
+		err := fp.WriteFPToFile(fileConfigToWrite, "incorrectFileName")
+		if err == nil {
+			t.Errorf("WriteFPToFile(): got %v, want %v", err, "no such file or directory")
+		}
+	})
+
 }

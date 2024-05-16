@@ -11,9 +11,6 @@ import (
 
 var ErrIncorrectFilePosition = errors.New("the file position is larger than file size")
 
-// var VarLogFPEnvVarName string = "VARLOGFP"
-// TODO: consider how to set the environment variable differently
-
 type FilePosition struct {
 	Fp int64
 }
@@ -46,35 +43,6 @@ func (fp *FilePosition) IfFPCorrect(file *os.File) (bool, error) {
 	return true, nil
 }
 
-// func (fp *FilePosition) GetFPFromEnv() error {
-// 	fpStr := os.Getenv(VarLogFPEnvVarName)
-// 	if fpStr == "" {
-// 		log.Printf("the %s environment variable was not found. The file position was set to 0", VarLogFPEnvVarName)
-// 		return nil
-// 	}
-
-// 	// convert fpStr (env var value) from string to int64
-// 	fpInt64, err := strconv.ParseInt(fpStr, 10, 64)
-// 	if err != nil {
-// 		log.Println("can't convert string go integer, the file position was set to 0")
-// 		return err
-// 	}
-
-// 	fp.Fp = fpInt64
-
-// 	return nil
-// }
-
-// // WriteFPToEnv writes file position to environment to VARLOGFP
-// func (fp *FilePosition) WriteFPToEnv() error {
-// 	err := os.Setenv(VarLogFPEnvVarName, strconv.Itoa(int(fp.Fp)))
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	return nil
-// }
-
 // the method reads the file position from the configuration file
 // and writes it to the FilePosition structure
 func (fp *FilePosition) ReadFPFromFile(fileName string) error {
@@ -103,9 +71,6 @@ func (fp *FilePosition) WriteFPToFile(fileConfig FileConfig, fileName string) er
 	if err != nil {
 		log.Println("WriteFPToFile(), error opening file", err.Error())
 		return err
-	} else {
-		log.Println("file has been opened:", file.Name())
-		// fmt.Printf("Type of 'file': %T\n", file)
 	}
 	defer file.Close()
 
@@ -116,9 +81,9 @@ func (fp *FilePosition) WriteFPToFile(fileConfig FileConfig, fileName string) er
 		return err
 	}
 
-	_, err = file.Write(jsonData)
+	err = os.WriteFile(fileName, jsonData, 0644)
 	if err != nil {
-		log.Println("WriteFPToFile(), error writing to file", err)
+		log.Println("WriteFPToFile(), error writing to file", err.Error())
 		return err
 	}
 
