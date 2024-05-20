@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DATABASE_NAME="ltr"
+DATABASE_NAME="logtracker"
 USER_NAME="raf"
 PASSWORD="qwq121"
 TABLE_NAME="lg_tab"

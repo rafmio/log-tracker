@@ -1,6 +1,6 @@
 {
     "pattern": "ufw.log*",
-    "excludePattern": "*.gz",
+    "excludePattern": ".gz",
     "directory": "/home/raf/log-tracker/log-files",
-    "filePosition": "26462"
+    "filePosition": "2211268"
 }
