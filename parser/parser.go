@@ -32,7 +32,8 @@ func ParseLog(logLine string) (LogEntry, error) {
 		return LogEntry{}, ErrEmptyString
 	}
 
-	tokens := strings.Split(logLine, " ") // split log-entry into slices
+	// tokens := strings.Split(logLine, " ") // split log-entry into slices
+	tokens := strings.Fields(logLine)
 
 	// PARSE TIMESTAMP
 	// the UFW log file does not specify the year, we assign the current one
@@ -56,16 +57,16 @@ func ParseLog(logLine string) (LogEntry, error) {
 	month := months[tokens[0]]
 
 	// if the number of the month consists of one character, then add '0' before it
-	// if len(tokens[1]) == 1 {
-	// 	tokens[1] = "0" + tokens[1]
-	// }
+	if len(tokens[1]) == 1 {
+		tokens[1] = "0" + tokens[1]
+	}
+
 	// cast to the appropriate format so that the time.Parse was able to parse
 	timeStampStr := yearStr + "-" + month + "-" + tokens[1] + " " + tokens[2]
-	fmt.Printf("[%s][%s][%s][%s]\n", yearStr, month, tokens[1], tokens[2]) // debugging
+
 	timeStamp, err := time.Parse("2006-01-02 15:04:05", timeStampStr)
 	if err != nil {
-		fmt.Println("timeStampStr:", timeStampStr) // debugging
-		log.Println("can't parse time")            // TODO: make log system
+		log.Println("can't parse time") // TODO: make log system
 		return LogEntry{}, ErrParseTimeStamp
 	}
 	result.TmStmp = timeStamp
