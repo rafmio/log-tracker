@@ -36,10 +36,9 @@ func ParserRunner() error {
 	correct, err := fp.IfFPCorrect(file)
 	if err != nil {
 		log.Println(err)
-		return err
 	}
 	if !correct {
-		log.Println("incorrect file position")
+		log.Println("incorrect file position. The file position has been set to 0")
 		fp.Fp = int64(0)
 	}
 
