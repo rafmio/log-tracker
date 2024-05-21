@@ -22,6 +22,8 @@ func ParserRunner() error {
 	file, err := parser.SelectAndOpen(fileConfig)
 	if err != nil {
 		return err
+	} else {
+		log.Printf("the %s file has been selected\n", file.Name())
 	}
 	defer file.Close()
 
@@ -45,6 +47,8 @@ func ParserRunner() error {
 	logLinesSls, err := parser.FileReader(file, fp.Fp)
 	if err != nil {
 		return err
+	} else {
+		log.Printf("there are %d lines for reading\n", len(logLinesSls))
 	}
 
 	// find the file position after reading
