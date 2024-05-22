@@ -1,1 +1,5 @@
 FROM postgres:14.6
+ENV POSTGRES_DB logtracker
+ENV POSTGRES_USER raf
+ENV POSTGRES_PASSWORD qwq121
+COPY ./scripts/script-db /docker-entrypoint-initdb.d/
