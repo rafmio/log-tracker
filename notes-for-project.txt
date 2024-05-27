@@ -26,3 +26,6 @@ https://help.reg.ru/support/servery-vps/oblachnyye-servery/rabota-s-serverom/ssh
 4.ssh root@194.58.102.129
 
 И никаких ключей не нужно добавлять в личном кабинете reg.ru
+
+Соединение контейнеров:
+https://stepik.org/lesson/372172/step/1?unit=359726
