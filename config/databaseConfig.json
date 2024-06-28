@@ -2,6 +2,8 @@
     "driverName": "postgres",
     "user": "raf",
     "dbname": "logtracker",
+    "host": "db",
+    "port": "5432",
     "tableName": "lg_tab_1",
     "password": "qwq121",
     "sslmode": "disable"

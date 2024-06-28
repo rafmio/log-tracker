@@ -6,27 +6,20 @@ import (
 	"os"
 )
 
-var ConfDBFilePath string = "/home/raf/log-tracker/config/databaseConfig.json"
+// var ConfDBFilePath string = "/home/raf/log-tracker/config/databaseConfig.json"
+var ConfDBFilePath string = "config/databaseConfig.json"
 
 // declare the structure of the database connection parameters
 type ConnectDBConfig struct {
 	DriverName string
 	User       string
 	Dbname     string
+	Host       string
+	Port       string
 	TableName  string
 	Password   string
 	Sslmode    string
 }
-
-// initialize ConnectDBConfig with exact values
-// var CDBc ConnectDBConfig = ConnectDBConfig{
-// 	driverName: "postgres",
-// 	user:       "raf",
-// 	dbname:     "logtracker",
-// 	tableName:  "lg_tab_1",
-// 	password:   "qwq121",
-// 	sslmode:    "disable",
-// }
 
 // Extracts the settings from the json configuration file and returns
 // the ConnectDBConfig structure

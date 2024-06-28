@@ -10,6 +10,8 @@ type ConnectDBConfig struct {
 	DriverName string `json:"driverName"`
 	User       string `json:"user"`
 	Dbname     string `json:"dbname"`
+	Host       string `json:"host"`
+	Port       string `json:"port"`
 	TableName  string `json:"tableName"`
 	Password   string `json:"password"`
 	Sslmode    string `json:"sslmode"`
@@ -20,6 +22,8 @@ func main() {
 		DriverName: "postgres",
 		User:       "raf",
 		Dbname:     "logtracker",
+		Host:       "db",
+		Port:       "5432",
 		TableName:  "lg_tab_1",
 		Password:   "qwq121",
 		Sslmode:    "disable",
@@ -31,12 +35,6 @@ func main() {
 		return
 	}
 	defer file.Close()
-
-	// jsonData, err := json.Marshal(CDBc)
-	// if err != nil {
-	// 	log.Println(err.Error())
-	// 	return
-	// }
 
 	jsonData, err := json.MarshalIndent(CDBc, "", "    ")
 	if err != nil {
