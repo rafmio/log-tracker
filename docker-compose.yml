@@ -1,14 +1,40 @@
-version: '3'
+version: '3.8'
 services:
   app:
-    build: .
-    ports:
-      - "8080:8080"
-  db:
     build:
-        context: .  
-        dockerfile: Dockerfile.db
+      context: .
+      dockerfile: Dockerfile
+    container_name: parser
+    depends_on:
+      - db
     environment:
-      - POSTGRES_DB
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=raf
+      - DB_PASSWORD=qwq121
+      - DB_NAME=logtracker
+    volumes:
+      - /var/log:/app/rawlogs
+    networks:
+      - app-network 
+
+  db:
+   build:
+    context: .
+    dockerfile: dbhandler/Dockerfile
+   container_name: db
+   environment:
+    - POSTGRES_DB=logtracker
+    - POSTGRES_USER=raf
+    - POSTGRES_PASSWORD=qwq121
+   volumes:
+    - pgdata:/var/lib/postgresql/data
+   networks:
+    - app-network
+
+
+volumes:
+  pgdata:
+
+networks:
+  app-network:
