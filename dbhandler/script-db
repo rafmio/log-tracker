@@ -7,8 +7,8 @@ TABLE_NAME="lg_tab"
 TABLE_NAME_ID_SEQ="lg_tab_id_seq"
 
 # Creating DB
-# sudo -u postgres psql -c "CREATE DATABASE $DATABASE_NAME;"
-sudo -u raf psql -c "CREATE DATABASE $DATABASE_NAME;"
+sudo -u postgres psql -c "CREATE DATABASE $DATABASE_NAME;"
+# sudo -u raf psql -c "CREATE DATABASE $DATABASE_NAME;"
 
 # Creating relation
 # sudo -u postgres psql -c "CREATE ROLE $USER_NAME WITH LOGIN PASSWORD '$PASSWORD';"
