@@ -1,37 +1,33 @@
 #!/bin/bash
-# TimeWeb GPT
-
-set -e # немедленно останавливает исполнение скрипта, если возникла ошибка
 
 DATABASE_NAME="logtracker"
 USER_NAME="raf"
 PASSWORD="qwq121"
 TABLE_NAME="lg_tab"
+TABLE_NAME_ID_SEQ="lg_tab_id_seq"
 
-# Create database
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "postgres" <<-EOSQL
-    CREATE DATABASE $DATABASE_NAME;
-EOSQL
+# Создание базы данных
+psql -c "CREATE DATABASE $DATABASE_NAME;"
 
-# Create role and set password
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$DATABASE_NAME" <<-EOSQL
-    CREATE ROLE $USER_NAME WITH LOGIN PASSWORD '$PASSWORD';
-    GRANT ALL PRIVILEGES ON DATABASE $DATABASE_NAME TO $USER_NAME;
-EOSQL
+# Создание пользователя
+psql -c "CREATE ROLE $USER_NAME WITH LOGIN PASSWORD '$PASSWORD';"
 
-# Create table and grant privileges
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$DATABASE_NAME" <<-EOSQL
-    CREATE TABLE $TABLE_NAME (
-        id SERIAL PRIMARY KEY,
-        tmstmp TIMESTAMP NOT NULL,
-        srcip inet NOT NULL,
-        len varchar(255) NOT NULL,
-        ttl varchar(255),
-        innerid varchar(255),
-        spt varchar(255),
-        dpt varchar(255),
-        wndw varchar(255)
-    );
-    GRANT ALL PRIVILEGES ON TABLE $TABLE_NAME TO $USER_NAME;
-    GRANT ALL PRIVILEGES ON SEQUENCE ${TABLE_NAME}_id_seq TO $USER_NAME;
-EOSQL
+# Предоставление прав пользователю на базу данных
+psql -c "GRANT ALL PRIVILEGES ON DATABASE $DATABASE_NAME TO $USER_NAME;"
+
+# Создание таблицы
+psql -d $DATABASE_NAME -c "CREATE TABLE $TABLE_NAME (
+ id SERIAL PRIMARY KEY,
+ tmstmp TIMESTAMP NOT NULL,
+ srcip inet NOT NULL,
+ len varchar(255) NOT NULL,
+ ttl varchar(255),
+ innerid varchar(255),
+ spt varchar(255),
+ dpt varchar(255),
+ wndw varchar(255)
+);"
+
+# Предоставление прав пользователю на таблицу и последовательность
+psql -d $DATABASE_NAME -c "GRANT ALL PRIVILEGES ON TABLE $TABLE_NAME TO $USER_NAME;"
+psql -d $DATABASE_NAME -c "GRANT ALL PRIVILEGES ON SEQUENCE $TABLE_NAME_ID_SEQ TO $USER_NAME;"
