@@ -1,0 +1,39 @@
+#!/bin/bash
+
+DATABASE_NAME="logtracker"
+USER_NAME="raf"
+PASSWORD="qwq121"
+TABLE_NAME="lg_tab"
+TABLE_NAME_ID_SEQ="lg_tab_id_seq"
+
+# Creating DB
+sudo -u postgres psql -c "CREATE DATABASE $DATABASE_NAME;"
+# sudo -u raf psql -c "CREATE DATABASE $DATABASE_NAME;"
+
+# Creating relation
+sudo -u postgres psql -c "CREATE ROLE $USER_NAME WITH LOGIN PASSWORD '$PASSWORD';"
+# sudo -u raf psql -c "CREATE ROLE $USER_NAME WITH LOGIN PASSWORD '$PASSWORD';"
+
+# Give the user the rights to the created database
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $DATABASE_NAME TO $USER_NAME;"
+# sudo -u raf psql -c "GRANT ALL PRIVILEGES ON DATABASE $DATABASE_NAME TO $USER_NAME;"
+
+# Creating the table 
+sudo -u postgres psql -d $DATABASE_NAME -U postgres -c "CREATE TABLE $TABLE_NAME (
+# sudo -u raf psql -d $DATABASE_NAME -U raf -c "CREATE TABLE $TABLE_NAME (
+ id SERIAL PRIMARY KEY,
+ tmstmp TIMESTAMP NOT NULL,
+ srcip inet NOT NULL,
+ len varchar(255) NOT NULL,
+ ttl varchar(255),
+ innerid varchar(255),
+ spt varchar(255),
+ dpt varchar(255),
+ wndw varchar(255)
+);"
+
+# Giving the user the rights to the sequence
+sudo -u postgres psql -d $DATABASE_NAME -U postgres -c "GRANT ALL PRIVILEGES ON TABLE $TABLE_NAME TO $USER_NAME;"
+# sudo -u raf psql -d $DATABASE_NAME -U raf -c "GRANT ALL PRIVILEGES ON TABLE $TABLE_NAME TO $USER_NAME;"
+sudo -u postgres psql -d $DATABASE_NAME -U postgres -c "GRANT ALL PRIVILEGES ON SEQUENCE $TABLE_NAME_ID_SEQ TO $USER_NAME;"
+# sudo -u raf psql -d $DATABASE_NAME -U raf -c "GRANT ALL PRIVILEGES ON SEQUENCE $TABLE_NAME_ID_SEQ TO $USER_NAME;"
