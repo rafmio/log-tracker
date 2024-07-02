@@ -1,4 +1,6 @@
 #!/bin/bash
+# TimeWeb GPT
+
 set -e # немедленно останавливает исполнение скрипта, если возникла ошибка
 
 DATABASE_NAME="logtracker"
