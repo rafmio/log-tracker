@@ -2,5 +2,5 @@
     "pattern": "ufw.log*",
     "excludePattern": ".gz",
     "directory": "rawlogs",
-    "filePosition": "26387"
+    "filePosition": "0"
 }

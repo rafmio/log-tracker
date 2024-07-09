@@ -2,7 +2,7 @@
     "driverName": "postgres",
     "user": "raf",
     "dbname": "logtracker",
-    "host": "db",
+    "host": "localhost",
     "port": "5432",
     "tableName": "lg_tab",
     "password": "qwq121",
