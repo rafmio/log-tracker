@@ -4,6 +4,6 @@ WORKDIR /app
 COPY . .
 RUN go mod download && go get . && CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
-VOLUME [ "/var/log" ]
+VOLUME /var/log:/rawlogs
 
 ENTRYPOINT ["/bin/sh", "-c", "while true; do sleep 5m; ./main; done"]
