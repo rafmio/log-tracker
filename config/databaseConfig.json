@@ -2,7 +2,7 @@
     "driverName": "postgres",
     "user": "raf",
     "dbname": "logtracker",
-    "host": "host.docker.internal",
+    "host": "194.58.102.129",
     "port": "5432",
     "tableName": "lg_tab",
     "password": "qwq121",
