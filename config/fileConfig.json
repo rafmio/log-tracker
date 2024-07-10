@@ -1,6 +1,6 @@
 {
     "pattern": "ufw.log*",
     "excludePattern": ".gz",
-    "directory": "rawlogs",
-    "filePosition": "0"
+    "directory": "/var/log",
+    "filePosition": "3921596"
 }

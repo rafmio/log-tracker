@@ -1,6 +1,6 @@
 {
     "driverName": "postgres",
-    "user": "postgres",
+    "user": "raf",
     "dbname": "logtracker",
     "host": "127.0.0.1",
     "port": "5432",
