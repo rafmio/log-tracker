@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dynamic Table</title>
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: center;
+    }
+</style>
+</head>
+<body>
+
+<div>
+    <label for="filter">Filter:</label>
+    <select id="filter">
+        <option value="all">All</option>
+        <option value="time">Time</option>
+        <option value="ip">IP</option>
+        <option value="len">Len</option>
+        <option value="ttl">TTL</option>
+        <option value="id">ID</option>
+        <option value="spt">SPT</option>
+        <option value="dpt">DPT</option>
+        <option value="window">Window</option>
+    </select>
+</div>
+
+<table id="dynamic-table">
+    <thead>
+        <tr>
+            <th>Time</th>
+            <th>IP</th>
+            <th>Len</th>
+            <th>TTL</th>
+            <th>ID</th>
+            <th>SPT</th>
+            <th>DPT</th>
+            <th>Window</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Table rows will be dynamically added here -->
+    </tbody>
+</table>
+
+<script>
+    // Sample data (replace with your dynamic data)
+    const data = [
+        { time: '12:00', ip: '192.168.1.1', len: 100, ttl: 64, id: 1234, spt: 12345, dpt: 54321, window: 1024 },
+        { time: '12:05', ip: '192.168.1.2', len: 150, ttl: 128, id: 5678, spt: 54321, dpt: 12345, window: 2048 }
+        // Add more data as needed
+    ];
+
+    const table = document.getElementById('dynamic-table');
+    const tbody = table.getElementsByTagName('tbody')[0];
+    const filter = document.getElementById('filter');
+
+    function populateTable() {
+        tbody.innerHTML = '';
+
+        data.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.time}</td>
+                <td>${item.ip}</td>
+                <td>${item.len}</td>
+                <td>${item.ttl}</td>
+                <td>${item.id}</td>
+                <td>${item.spt}</td>
+                <td>${item.dpt}</td>
+                <td>${item.window}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    populateTable();
+
+    filter.addEventListener('change', () => {
+        const selectedFilter = filter.value;
+        if (selectedFilter === 'all') {
+            populateTable();
+        } else {
+            const filteredData = data.filter(item => item[selectedFilter.toLowerCase()] == 128);
+            tbody.innerHTML = '';
+            filteredData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.time}</td>
+                    <td>${item.ip}</td>
+                    <td>${item.len}</td>
+                    <td>${item.ttl}</td>
+                    <td>${item.id}</td>
+                    <td>${item.spt}</td>
+                    <td>${item.dpt}</td>
+                    <td>${item.window}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
+
