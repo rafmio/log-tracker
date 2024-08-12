@@ -83,6 +83,10 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// The date data is in the dd/mm/yyyy format, they need to be converted to the yyyy-mm-dd format
+	startTime := startDate + " 00:00:00"
+	endTime := endDate + " 23:59:59"
+
+	// making a query to the databasequery
 	rows, err := db.Query("SELECT * FROM lb_tab WHERE tmstmp BETWEEN $1 AND $1", startTime, endTime)
 	if err != nil {
 		log.Fatal(err)
@@ -97,7 +101,7 @@ func main() {
 	mux.HandleFunc("/fetch", fetchHandler)
 
 	// running server
-	if err := http.ListenAndServe(port, mux); err != nil {
+	if err := http.ListenAndServe(portTest, mux); err != nil {
 		log.Fatal(err)
 	}
 }
