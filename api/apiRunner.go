@@ -39,7 +39,8 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 	// set headers
 	w.Header().Set("Content-Type", "application/json")
 
-	sourceName := r.FormValue("sourceName")
+	// get parameters from form
+	sourceName := r.FormValue("sourceName") // to know which of the two servers to send the request to
 	serviceType := r.FormValue("serviceType")
 	startDate := r.FormValue("startDate")
 	endDate := r.FormValue("endDate")
