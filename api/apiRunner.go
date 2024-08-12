@@ -1,7 +1,10 @@
 package main
 
 import (
+	"database/sql"
+	"fmt"
 	"log"
+	"logtracker/dbhandler"
 	"net/http"
 )
 
@@ -57,6 +60,34 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid sourceName", http.StatusBadRequest)
 		return
 	}
+
+	// read config file for connecting to DB
+	dbConfigStruct, err := dbhandler.LoadDatabaseConfig(fileDBConfigName)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dbConfigTxt := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		dbConfigStruct.Host,
+		dbConfigStruct.Port,
+		dbConfigStruct.User,
+		dbConfigStruct.Password,
+		dbConfigStruct.Dbname,
+		dbConfigStruct.Sslmode,
+	)
+
+	// connect to DB
+	db, err := sql.Open(dbConfigStruct.DriverName, dbConfigTxt)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// The date data is in the dd/mm/yyyy format, they need to be converted to the yyyy-mm-dd format
+	rows, err := db.Query("SELECT * FROM lb_tab WHERE tmstmp BETWEEN $1 AND $1", startTime, endTime)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
 
 func main() {
