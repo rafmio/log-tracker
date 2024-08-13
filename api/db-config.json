@@ -1,0 +1,32 @@
+{
+    "BlackOxygenium": {
+        "Name": "BlackOxygenium",
+        "Host": "194.58.102.129",
+        "Port": "5432",
+        "DBName": "logtracker",
+        "User": "raf",
+        "TableName": "lg_tab",
+        "Password": "qwq121",
+        "SslMode": "disable"
+    },
+    "CuteGanymede": {
+        "Name": "CuteGanymede",
+        "Host": "147.45.226.19",
+        "Port": "5432",
+        "DBName": "logtracker",
+        "User": "raf",
+        "TableName": "lg_tag",
+        "Password": "qwq121",
+        "SslMode": "disable"
+    },
+    "TestServer": {
+        "Name": "TestServer",
+        "Host": "127.0.0.1",
+        "Port": "5432",
+        "DBName": "logtracker",
+        "User": "raf",
+        "TableName": "lg_tag",
+        "Password": "qwq121",
+        "SslMode": "disable"
+    }
+}
