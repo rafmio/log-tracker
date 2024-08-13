@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-type Server struct {
+type Source struct {
 	Name      string `json:"Name"`
 	Host      string `json:"Host"`
 	Port      string `json:"Port"`
@@ -17,7 +17,7 @@ type Server struct {
 	SslMode   string `json:"SslMode"`
 }
 
-func readConfig(fileName string) map[string]Server {
+func readConfig(fileName string) map[string]Source {
 	// reading file with configuration for DB connection
 	file, err := os.ReadFile(fileName)
 	if err != nil {
@@ -25,7 +25,7 @@ func readConfig(fileName string) map[string]Server {
 	}
 
 	// unmarshalling JSON data to struct
-	var servers map[string]Server
+	var servers map[string]Source
 	err = json.Unmarshal(file, &servers)
 	if err != nil {
 		log.Println("Unmarshalling JSON:", err)
