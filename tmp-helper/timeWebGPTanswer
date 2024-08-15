@@ -1,0 +1,136 @@
+Чтобы ваш код в Go мог соединяться с базой данных PostgreSQL, которая находится вне Docker-контейнера, необходимо убедиться, что контейнер имеет доступ к хосту, где расположена база данных. Также нужно правильно настроить параметры подключения.
+
+
+Обновление кода
+
+Ваш код уже выглядит корректно для подключения к внешней базе данных, если конфигурационный файл содержит правильные параметры подключения.
+
+
+Создание Dockerfile
+
+Вот пример Dockerfile для вашего приложения на Go:
+
+
+# Укажите базовый образ
+FROM golang:1.17-alpine
+
+# Установите рабочую директорию внутри контейнера
+WORKDIR /app
+
+# Скопируйте файлы go.mod и go.sum и установите зависимости
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Скопируйте исходный код в контейнер
+COPY . .
+
+# Соберите приложение
+RUN go build -o main .
+
+# Определите команду запуска контейнера
+CMD ["./main"]
+
+
+Создание docker-compose.yml
+
+Если вы хотите использовать Docker Compose для упрощения управления контейнерами, вот пример файла docker-compose.yml:
+
+
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: my_go_app
+    volumes:
+      - ./config:/app/config
+    environment:
+      - DB_HOST=host.docker.internal
+      - DB_PORT=5432
+      - DB_USER=your_db_user
+      - DB_PASSWORD=your_db_password
+      - DB_NAME=your_db_name
+      - DB_SSLMODE=disable
+    ports:
+      - "8080:8080"
+
+
+Настройка переменных окружения
+
+В вашем коде замените пути и значения конфигурации на использование переменных окружения:
+
+
+Файл setdbconnect.go:
+
+
+package dbhandler
+
+import (
+	"encoding/json"
+	"log"
+	"os"
+)
+
+// declare the structure of the database connection parameters
+type ConnectDBConfig struct {
+	DriverName string
+	User       string
+	Dbname     string
+	Host       string
+	Port       string
+	TableName  string
+	Password   string
+	Sslmode    string
+}
+
+// Extracts the settings from the json configuration file and returns
+// the ConnectDBConfig structure
+func LoadDatabaseConfig() (ConnectDBConfig, error) {
+	CDBc := ConnectDBConfig{
+		DriverName: "postgres",
+		User:       os.Getenv("DB_USER"),
+		Dbname:     os.Getenv("DB_NAME"),
+		Host:       os.Getenv("DB_HOST"),
+		Port:       os.Getenv("DB_PORT"),
+		TableName:  "your_table_name", // Укажите имя вашей таблицы
+		Password:   os.Getenv("DB_PASSWORD"),
+		Sslmode:    os.Getenv("DB_SSLMODE"),
+	}
+
+	return CDBc, nil
+}
+
+
+Запуск
+
+
+Создайте файл .env в корне проекта с содержимым:
+
+
+DB_HOST=host.docker.internal
+DB_PORT=5432
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_NAME=your_db_name
+DB_SSLMODE=disable
+
+
+
+Запустите Docker Compose:
+
+
+docker-compose up --build
+
+
+Теперь ваше приложение должно быть способно подключаться к локально установленной базе данных PostgreSQL изнутри Docker-контейнера.
+
+
+Следующие шаги:
+
+
+Проверьте, что все переменные окружения правильно настроены.
+
+Убедитесь, что PostgreSQL разрешает подключения от вашего Docker-контейнера.
+
+Попробуйте запустить контейнер и проверьте логи на наличие ошибок подключения.
+

@@ -25,7 +25,7 @@ func readConfig(fileName string) map[string]Source {
 	}
 
 	// unmarshalling JSON data to struct
-	var servers map[string]Source
+	var servers map[string]Source // TODO: rewrite with 'make'
 	err = json.Unmarshal(file, &servers)
 	if err != nil {
 		log.Println("Unmarshalling JSON:", err)
