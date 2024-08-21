@@ -22,6 +22,13 @@ const (
 	// endDate = "endDate"
 )
 
+type DateTimeRange struct {
+	StartDate time.Time
+	EndDate   time.Time
+	StartTime time.Time
+	EndTime   time.Time
+}
+
 /*
 fetchHandler() handles incoming HTTP requests.
 
