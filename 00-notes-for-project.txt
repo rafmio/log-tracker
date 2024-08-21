@@ -1,5 +1,4 @@
 Самописные приложения, как правило, инсталлируют в директорию /usr/local/bin
-
 Варианты мест хранения конфигурационных файлов:
 
 Алиса:
@@ -19,7 +18,6 @@ Fabula:
 reg.ru: подключение по SSH:
 https://help.reg.ru/support/servery-vps/oblachnyye-servery/rabota-s-serverom/ssh-tunneli-nastroyka-i-primery-prakticheskogo-ispolzovaniya#1
 
-
 1.ssh-keygen -t rsa
 2.Пропускаем все шаги
 3.ssh-copy-id user@yourserver (в моем случае ssh-copy-id root@194.58.102.129)
@@ -29,3 +27,12 @@ https://help.reg.ru/support/servery-vps/oblachnyye-servery/rabota-s-serverom/ssh
 
 Соединение контейнеров:
 https://stepik.org/lesson/372172/step/1?unit=359726
+
+-----
+PostgreSQL settings:
+The default file /etc/postgresql/13/main/postgresql.conf was copied with name 'postgresql.conf.old' and changed:
+Uncommented string 'listen_addresses = 'localhost' and changedd to 'listen_addressses = '*'
+
+The default file /etc/postgresql/13/main/pg_hba.conf was copie with name 'pg_hba.conf.old' and changed:
+added string:
+host     all     all       81.23.150.136/32         md5

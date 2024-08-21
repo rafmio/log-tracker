@@ -1,9 +1,15 @@
 package main
 
 import (
+	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
+	"time"
+
+	// import the PostgreSQL driver for datebase/sql
+	_ "github.com/lib/pq" // $ go get .
 )
 
 const (
@@ -45,7 +51,7 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 
 	// determine which source (server) received the request
 	// get parameters from Request.Form
-	sourceNamesStr := r.FormValue("sourceName") // to know which of the two servers to send the request to
+	sourceNamesStr := r.FormValue("sourceName")          // to know which of the two servers to send the request to
 	sourceNamesSls := strings.Split(sourceNamesStr, ",") // sourceNamesSls is of type []string
 
 	// slice for storing list of configs of DB connections to servers (sources)
@@ -77,8 +83,47 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 			srcConf.Password,
 			srcConf.SslMode,
 		))
-		startDateStr := r.FormValue()
 
+		if err != nil {
+			// http.Error(w, "Error connecting to DB", http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("Error connecting to DB: %v", err), http.StatusInternalServerError)
+			return
+		}
+		defer db.Close()
+
+		startDateStr := r.FormValue("startDate")
+		endDateStr := r.FormValue("endDate")
+
+		// parse dates
+		startDate, err := time.Parse("2006-01-02", startDateStr)
+		if err != nil {
+			http.Error(w, "Invalid startDate format", http.StatusBadRequest)
+			return
+		}
+		endDate, err := time.Parse("2006-01-02", endDateStr)
+		if err != nil {
+			http.Error(w, "Invalid endDate format", http.StatusBadRequest)
+			return
+		}
+
+		queryString := "SELECT * FROM " + srcConf.TableName + " WHERE tmstmp BETWEEN $1 AND $2"
+
+		rows, err := db.Query(queryString, startDate, endDate)
+		if err != nil {
+			http.Error(w, "Error executing query", http.StatusInternalServerError)
+			return
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var columnValue string
+			err = rows.Scan(&columnValue)
+			if err != nil {
+				http.Error(w, "Error scanning row", http.StatusInternalServerError)
+				return
+			}
+			w.Write([]byte(columnValue + "\n"))
+		}
 	}
 
 }
