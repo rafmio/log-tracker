@@ -1,0 +1,12 @@
+Пробные файлы.go по подклюению к DB отправляю в ~/Go/src/helloworld/dataBases
+
+Содержание http-запроса (url с параметрами):
+- наименование сервера
+- дата, время
+
+Наименования параметров запроса URL:
+- sourceName
+- startDate
+- endDate
+- startTime
+- endTime

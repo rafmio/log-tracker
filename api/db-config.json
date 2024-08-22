@@ -1,5 +1,5 @@
 {
-    "BlackOxygenium": {
+    "black_oxygenium": {
         "Name": "BlackOxygenium",
         "Host": "194.58.102.129",
         "Port": "5432",
@@ -9,7 +9,7 @@
         "Password": "qwq121",
         "SslMode": "disable"
     },
-    "CuteGanymede": {
+    "cute_ganymede": {
         "Name": "CuteGanymede",
         "Host": "147.45.226.19",
         "Port": "5432",
@@ -19,7 +19,7 @@
         "Password": "qwq121",
         "SslMode": "disable"
     },
-    "TestServer": {
+    "test_server": {
         "Name": "TestServer",
         "Host": "127.0.0.1",
         "Port": "5432",
