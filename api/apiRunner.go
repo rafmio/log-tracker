@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"time"
 
 	// import the PostgreSQL driver for datebase/sql
 	_ "github.com/lib/pq" // $ go get .
@@ -87,40 +86,6 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 		startDateStr := r.FormValue("start_date")
 		endDateStr := r.FormValue("end_date")
 
-		// parse dates
-		startDate, err := time.Parse("2006-01-02", startDateStr)
-		if err != nil {
-			http.Error(w, "Invalid startDate format", http.StatusBadRequest)
-			return
-		}
-		endDate, err := time.Parse("2006-01-02", endDateStr)
-		if err != nil {
-			http.Error(w, "Invalid endDate format", http.StatusBadRequest)
-			return
-		}
-
-		queryString := "SELECT * FROM " + srcConf.TableName + " WHERE tmstmp BETWEEN $1 AND $2"
-
-		rows, err := db.Query(queryString, startDate, endDate)
-		if err != nil {
-			http.Error(w, "Error executing query", http.StatusInternalServerError)
-			return
-		}
-		defer rows.Close()
-
-		for rows.Next() {
-			var columnValue string
-			err = rows.Scan(&columnValue)
-			if err != nil {
-				http.Error(w, "Error scanning row", http.StatusInternalServerError)
-				return
-			}
-
-			// set headers
-			w.Header().Set("Content-Type", "application/json")
-
-			w.Write([]byte(columnValue + "\n"))
-		}
 	}
 
 }
