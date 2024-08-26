@@ -2,18 +2,36 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	// import the PostgreSQL driver for datebase/sql
 	_ "github.com/lib/pq" // $ go get .
 )
 
+type LogEntry struct {
+	SeqNum string
+	TmStmp time.Time
+	SrcIP  string
+	Len    string
+	Ttl    string
+	Id     string // will named 'inner id' in database
+	Spt    string
+	Dpt    string
+	Window string // will named 'wndw' in database
+}
+
 const (
 	dbConfigFileName = "db-config.json"
 	port             = ":8082"
+	sourceNameParam  = "source_name"
+	startDateParam   = "start_date"
+	endDateParam     = "end_date"
+	layoutDateTime   = "2006-01-02T15:04"
 )
 
 /*
@@ -44,7 +62,7 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 
 	// determine which source (server) received the request
 	// get parameters from Request.Form
-	sourceNamesStr := r.FormValue("source_name")         // to know which of the two servers to send the request to
+	sourceNamesStr := r.FormValue(sourceNameParam)       // to know which of the two servers to send the request to
 	sourceNamesSls := strings.Split(sourceNamesStr, ",") // sourceNamesSls is of type []string
 
 	// slice for storing list of configs of DB connections to servers (sources)
@@ -83,11 +101,77 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 		// close connection to DB after use
 		defer db.Close()
 
-		startDateStr := r.FormValue("start_date")
-		endDateStr := r.FormValue("end_date")
+		// startDateStr := r.FormValue("start_date")
+		// endDateStr := r.FormValue("end_date")
 
+		startDate, err := time.Parse(layoutDateTime, r.FormValue(startDateParam))
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Invalid start_date: %v", err), http.StatusBadRequest)
+			return
+		}
+		endDate, err := time.Parse(layoutDateTime, r.FormValue(endDateParam))
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Invalid end_date: %v", err), http.StatusBadRequest)
+			return
+		}
+
+		// query DB for data between startDate and endDate
+		tmstmpColumnName := "tmstmp"
+		// query := `SELECT * FROM $1 WHERE $2 >= $3 AND $2 <= $4` // move the line above to the block with constants
+		query := fmt.Sprintf(`SELECT * FROM %s WHERE %s >= $1 AND %s <= $2`,
+			srcConf.TableName,
+			tmstmpColumnName,
+			tmstmpColumnName)
+
+		rows, err := db.Query(
+			query,
+			// srcConf.TableName, // $1
+			// tmstmpColumnName,  // $2
+			startDate, // $3
+			// tmstmpColumnName,  // $2
+			endDate, // $4
+		)
+
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Error querying DB: %v", err), http.StatusInternalServerError)
+			return
+		}
+
+		defer rows.Close()
+
+		entries := make([]LogEntry, 0)
+
+		for rows.Next() {
+			var entry LogEntry
+			err := rows.Scan(
+				&entry.SeqNum,
+				&entry.TmStmp,
+				&entry.SrcIP,
+				&entry.Len,
+				&entry.Ttl,
+				&entry.Id,
+				&entry.Spt,
+				&entry.Dpt,
+				&entry.Window,
+			)
+
+			if err != nil {
+				http.Error(w, fmt.Sprintf("Error scanning row: %v", err), http.StatusInternalServerError)
+				return
+			}
+
+			entries = append(entries, entry)
+		}
+
+		jsonEntries, err := json.Marshal(entries)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Error marshaling JSON: %v", err), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(jsonEntries)
 	}
-
 }
 
 func main() {
