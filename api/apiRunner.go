@@ -101,9 +101,6 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 		// close connection to DB after use
 		defer db.Close()
 
-		// startDateStr := r.FormValue("start_date")
-		// endDateStr := r.FormValue("end_date")
-
 		startDate, err := time.Parse(layoutDateTime, r.FormValue(startDateParam))
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Invalid start_date: %v", err), http.StatusBadRequest)
