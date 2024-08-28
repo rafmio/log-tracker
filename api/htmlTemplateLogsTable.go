@@ -1,3 +1,5 @@
+package main
+
 const htmlTemplateLogsTable = `
 <table>
         <thead>
@@ -17,7 +19,7 @@ const htmlTemplateLogsTable = `
             {{range .}}
             <tr>
                 <td>{{.SeqNum}}</td>
-                <td>{{.TmStmp}}</td>
+                <td>{{.TmStmp.Format "2006-01-02 15:04:05"}}</td>
                 <td>{{.SrcIP}}</td>
                 <td>{{.Len}}</td>
                 <td>{{.Ttl}}</td>

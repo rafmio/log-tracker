@@ -2,8 +2,8 @@ package main
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"strings"
@@ -157,17 +157,23 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			entries = append(entries, entry)
+			entries = append(entries, entry) // entries is of type []LogEntry
 		}
 
-		jsonEntries, err := json.Marshal(entries)
+		tmpl, err := template.New("logTable").Parse(htmlTemplateLogsTable)
 		if err != nil {
-			http.Error(w, fmt.Sprintf("Error marshaling JSON: %v", err), http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("Error parsing template: %v", err), http.StatusInternalServerError)
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(jsonEntries)
+		// var htmlOutput string
+		err = tmpl.Execute(w, entries)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Error executing template: %v", err), http.StatusInternalServerError)
+			return
+		}
+
+		// fmt.Fprintf(w, htmlOutput)
 	}
 }
 
