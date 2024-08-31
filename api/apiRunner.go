@@ -60,6 +60,8 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println("Request received:", r.Form)
+
 	// determine which source (server) received the request
 	// get parameters from Request.Form
 	sourceNamesStr := r.FormValue(sourceNameParam)       // to know which of the two servers to send the request to
