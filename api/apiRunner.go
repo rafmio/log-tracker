@@ -47,11 +47,20 @@ parameter names:
 */
 func fetchHandler(w http.ResponseWriter, r *http.Request) {
 
-	// check if http method is 'GET'
-	// if r.Method != http.MethodGet {
-	// 	http.Error(w, "Only GET method allowed", http.StatusMethodNotAllowed)
-	// 	return
-	// }
+	if r.Method == http.MethodOptions {
+		fmt.Println("r.Method:", r.Method)
+		// return // finish handling if it is preflight query
+		// SET HEADERS ----------------------------------------------
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		// Установка заголовка CORS
+		w.Header().Set("Access-Control-Allow-Origin", "*") // Разрешить все источники
+		// Или, чтобы разрешить только конкретный источник:
+		// w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+		w.WriteHeader(http.StatusOK)
+		// ----------------------------------------------------------
+	}
 
 	// parse form for determine source (exact DB) and further date parsing
 	err := r.ParseForm()
@@ -60,7 +69,7 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("Request received:", r.Form)
+	log.Println("Request received:", r.Form) // DEBUG INFO
 
 	// determine which source (server) received the request
 	// get parameters from Request.Form
@@ -162,17 +171,6 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 			entries = append(entries, entry) // entries is of type []LogEntry
 		}
 
-		// SET HEADERS ----------------------------------------------
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		// Установка заголовка CORS
-		w.Header().Set("Access-Control-Allow-Origin", "*") // Разрешить все источники
-		// Или, чтобы разрешить только конкретный источник:
-		// w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
-		w.WriteHeader(http.StatusOK)
-		// ----------------------------------------------------------
-
 		tmpl, err := template.New("logTable").Parse(htmlTemplateLogsTable)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Error parsing template: %v", err), http.StatusInternalServerError)
@@ -186,6 +184,8 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		fmt.Println("DEBUG: end of fetchHandler(). Response headers:")
+		fmt.Println(w.Header())
 		// fmt.Fprintf(w, htmlOutput)
 	}
 }
