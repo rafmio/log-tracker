@@ -47,20 +47,15 @@ parameter names:
 */
 func fetchHandler(w http.ResponseWriter, r *http.Request) {
 
-	if r.Method == http.MethodOptions {
-		fmt.Println("r.Method:", r.Method)
-		// return // finish handling if it is preflight query
-		// SET HEADERS ----------------------------------------------
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		// Установка заголовка CORS
-		w.Header().Set("Access-Control-Allow-Origin", "*") // Разрешить все источники
-		// Или, чтобы разрешить только конкретный источник:
-		// w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
-		w.WriteHeader(http.StatusOK)
-		// ----------------------------------------------------------
-	}
+	fmt.Println("r.Method:", r.Method)
+	// return // finish handling if it is preflight query
+	// SET HEADERS ----------------------------------------------
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*") // Разрешить все источники
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, hx-request, hx-target, hx-current-url")
+
+	fmt.Fprint(w, "Hello-mello!") // DEBUG STRING
 
 	// parse form for determine source (exact DB) and further date parsing
 	err := r.ParseForm()
@@ -170,6 +165,7 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 
 			entries = append(entries, entry) // entries is of type []LogEntry
 		}
+		w.WriteHeader(http.StatusOK)
 
 		tmpl, err := template.New("logTable").Parse(htmlTemplateLogsTable)
 		if err != nil {
