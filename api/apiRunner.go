@@ -41,7 +41,7 @@ the format of the received request (example):
 https://194.58.102.129:5432/fetch?source_name=cute_ganymede&start_date=2024-08-21T14:35&end_date=2024-08-22T11:50
 
 parameter names:
-- sourceName: Name of the source (black_oxygenium of cute_ganymede)
+- sourceName: Name of the source (black_oxygenium or cute_ganymede)
 - start_date: Start date and time (ISO 8601) of the data to fetch
 - end_date: End date and time (ISO 8601) of the data to fetch
 */
