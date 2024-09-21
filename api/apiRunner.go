@@ -52,7 +52,7 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 	// SET HEADERS ----------------------------------------------
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Access-Control-Allow-Origin", "*") // Разрешить все источники
-	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS") // methods 'PUT', 'PATCH' and 'DELETE' has been deleted
 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, hx-request, hx-target, hx-current-url")
 
 	fmt.Fprint(w, "Hello-mello!") // DEBUG STRING
