@@ -51,7 +51,7 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 	// return // finish handling if it is preflight query
 	// SET HEADERS ----------------------------------------------
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Header().Set("Access-Control-Allow-Origin", "*") // Разрешить все источники
+	w.Header().Set("Access-Control-Allow-Origin", "*")             // Разрешить все источники
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS") // methods 'PUT', 'PATCH' and 'DELETE' has been deleted
 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, hx-request, hx-target, hx-current-url")
 
@@ -128,11 +128,8 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 
 		rows, err := db.Query(
 			query,
-			// srcConf.TableName, // $1
-			// tmstmpColumnName,  // $2
 			startDate, // $3
-			// tmstmpColumnName,  // $2
-			endDate, // $4
+			endDate,   // $4
 		)
 
 		if err != nil {
