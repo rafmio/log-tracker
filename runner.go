@@ -9,9 +9,6 @@ import (
 
 func ParserRunner() error {
 	// set path to config file
-	// fileConfigName := "/home/raf/log-trackerl/config/fileConfig.json"
-	// fileDBConfigName := "/home/raf/log-tracker/config/databaseConfig.json"
-
 	fileConfigName := "config/fileConfig.json"
 	fileDBConfigName := "config/databaseConfig.json"
 
