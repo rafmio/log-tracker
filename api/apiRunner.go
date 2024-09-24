@@ -120,7 +120,6 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 
 		// query DB for data between startDate and endDate
 		tmstmpColumnName := "tmstmp"
-		// query := `SELECT * FROM $1 WHERE $2 >= $3 AND $2 <= $4` // move the line above to the block with constants
 		query := fmt.Sprintf(`SELECT * FROM %s WHERE %s >= $1 AND %s <= $2`,
 			srcConf.TableName,
 			tmstmpColumnName,
