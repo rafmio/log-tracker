@@ -38,7 +38,7 @@ const (
 fetchHandler() handles incoming HTTP requests.
 
 the format of the received request (example):
-https://194.58.102.129:5432/fetch?source_name=cute_ganymede&start_date=2024-08-21T14:35&end_date=2024-08-22T11:50
+https://194.58.102.129:8082/fetch?source_name=cute_ganymede&start_date=2024-08-21T14:35&end_date=2024-08-22T11:50
 
 parameter names:
 - sourceName: Name of the source (black_oxygenium or cute_ganymede)
@@ -47,15 +47,11 @@ parameter names:
 */
 func fetchHandler(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("r.Method:", r.Method)
-	// return // finish handling if it is preflight query
 	// SET HEADERS ----------------------------------------------
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Access-Control-Allow-Origin", "*")             // Разрешить все источники
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS") // methods 'PUT', 'PATCH' and 'DELETE' has been deleted
 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, hx-request, hx-target, hx-current-url")
-
-	// fmt.Fprint(w, "Hello-mello!") // DEBUG STRING
 
 	// parse form for determine source (exact DB) and further date parsing
 	err := r.ParseForm()
@@ -63,8 +59,6 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error parsing form", http.StatusBadRequest)
 		return
 	}
-
-	log.Println("Request received:", r.Form) // DEBUG INFO
 
 	// determine which source (server) received the request
 	// get parameters from Request.Form
