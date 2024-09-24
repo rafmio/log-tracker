@@ -55,7 +55,7 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS") // methods 'PUT', 'PATCH' and 'DELETE' has been deleted
 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, hx-request, hx-target, hx-current-url")
 
-	fmt.Fprint(w, "Hello-mello!") // DEBUG STRING
+	// fmt.Fprint(w, "Hello-mello!") // DEBUG STRING
 
 	// parse form for determine source (exact DB) and further date parsing
 	err := r.ParseForm()
