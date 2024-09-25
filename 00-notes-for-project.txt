@@ -36,3 +36,12 @@ Uncommented string 'listen_addresses = 'localhost' and changedd to 'listen_addre
 The default file /etc/postgresql/13/main/pg_hba.conf was copie with name 'pg_hba.conf.old' and changed:
 added string:
 host     all     all       81.23.150.136/32         md5
+
+DONE:Gute Ganymede
+
+внес изменения в файл /etc/postgresql/14/main/postgresql.conf (скопировав в postgresql.conf.old старые данные)
+#listen_addresses = 'localhost'         # what IP address(es) to listen on; - 'localhost' has commented by default
+listen_addresses = '194.58.102.129, 81.23.150.135, 147.45.226.19'
+
+внес изменения в файл /etc/postgresql/14/main/pg_hba.conf (также скопировав в pg_hba.conf.old)
+
