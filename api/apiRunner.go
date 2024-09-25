@@ -37,7 +37,7 @@ const (
 /*
 fetchHandler() handles incoming HTTP requests.
 
-the format of the received request (example):
+The format of the received request (example):
 https://194.58.102.129:8082/fetch?source_name=cute_ganymede&start_date=2024-08-21T14:35&end_date=2024-08-22T11:50
 
 parameter names:
@@ -49,7 +49,7 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 
 	// SET HEADERS ----------------------------------------------
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Header().Set("Access-Control-Allow-Origin", "*")             // Разрешить все источники
+	w.Header().Set("Access-Control-Allow-Origin", "*")             // Allow all origins
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS") // methods 'PUT', 'PATCH' and 'DELETE' has been deleted
 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, hx-request, hx-target, hx-current-url")
 
@@ -98,8 +98,7 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// close connection to DB after use
-		defer db.Close()
+		defer db.Close() // close connection to DB
 
 		startDate, err := time.Parse(layoutDateTime, r.FormValue(startDateParam))
 		if err != nil {
@@ -109,6 +108,12 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 		endDate, err := time.Parse(layoutDateTime, r.FormValue(endDateParam))
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Invalid end_date: %v", err), http.StatusBadRequest)
+			return
+		}
+
+		// check if interval is valid (less than 48 hours)
+		if endDate.Sub(startDate) > time.Hour*48 {
+			http.Error(w, "<p>Interval is too long.Please set the interval less than 48 hours</p>", http.StatusBadRequest)
 			return
 		}
 
