@@ -45,3 +45,12 @@ listen_addresses = '194.58.102.129, 81.23.150.135, 147.45.226.19'
 
 внес изменения в файл /etc/postgresql/14/main/pg_hba.conf (также скопировав в pg_hba.conf.old)
 
+Gute Ganymede configuration (v.12): added to postgresql.conf: 'listen_addresses = '194.58.102.129, 81.23.150.136, 147.45.226.19''
+
+File pg_hba.conf has been copied to pg_hba.conf.old, and 'IPv4 local connections' changed to:
+
+# IPv4 local connections:
+host    all             all             81.23.150.136/32        md5 # added by Raf
+host    all             all             194.58.102.129/32       md5 # added by Raf
+host    all             all             147.45.226.19/32        md5 # added by Raf
+host    all             all             92.255.199.163/32       md5 # added by Raf
