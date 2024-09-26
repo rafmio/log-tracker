@@ -15,7 +15,7 @@
         "Port": "5432",
         "DBName": "logtracker",
         "User": "raf",
-        "TableName": "lg_tag",
+        "TableName": "lg_tab",
         "Password": "qwq121",
         "SslMode": "disable"
     },
@@ -25,7 +25,7 @@
         "Port": "5432",
         "DBName": "logtracker",
         "User": "raf",
-        "TableName": "lg_tag",
+        "TableName": "lg_tab",
         "Password": "qwq121",
         "SslMode": "disable"
     }
