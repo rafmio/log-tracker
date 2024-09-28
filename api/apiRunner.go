@@ -181,6 +181,10 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func generalStatHandler(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("<p>DEBUG: hello from generalStatHandler</p>"))
+}
+
 func main() {
 	mux := http.NewServeMux()
 
@@ -188,7 +192,7 @@ func main() {
 
 	// creating routes
 	mux.HandleFunc("/fetch", fetchHandler)
-
+	mux.HandleFunc("/logtracker/statistic/generalstat", generalStatHandler)
 	// running server
 	if err := http.ListenAndServe(port, mux); err != nil {
 		log.Fatal(err)
