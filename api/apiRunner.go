@@ -183,6 +183,7 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 
 func generalStatHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("<p>DEBUG: hello from generalStatHandler</p>"))
+	renderGeneralStatHandler(w, r)
 }
 
 func main() {
