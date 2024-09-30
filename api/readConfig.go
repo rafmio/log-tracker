@@ -17,19 +17,38 @@ type Source struct {
 	SslMode   string `json:"SslMode"`
 }
 
-func readConfig(fileName string) map[string]Source {
+// func readConfig(fileName string) map[string]Source {
+// 	// reading file with configuration for DB connection
+// 	file, err := os.ReadFile(fileName)
+// 	if err != nil {
+// 		log.Println("Opening config file:", err)
+// 	}
+
+// 	// unmarshalling JSON data to struct
+// 	var servers map[string]Source // TODO: rewrite with 'make'
+// 	err = json.Unmarshal(file, &servers)
+// 	if err != nil {
+// 		log.Println("Unmarshalling JSON:", err)
+// 	}
+
+// 	return servers
+// }
+
+func (l *ltGeneralStats) readConfig(dbConfigFilePath string) error {
 	// reading file with configuration for DB connection
-	file, err := os.ReadFile(fileName)
+	file, err := os.ReadFile(dbConfigFilePath)
 	if err != nil {
 		log.Println("Opening config file:", err)
 	}
 
 	// unmarshalling JSON data to struct
-	var servers map[string]Source // TODO: rewrite with 'make'
-	err = json.Unmarshal(file, &servers)
+	// var servers map[string]Source // TODO: rewrite with 'make'
+	dbConfig := make(map[string]Source)
+
+	err = json.Unmarshal(file, &dbConfig)
 	if err != nil {
 		log.Println("Unmarshalling JSON:", err)
 	}
 
-	return servers
+	return err
 }

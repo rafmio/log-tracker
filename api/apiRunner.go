@@ -66,7 +66,12 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 	sourceNamesSls := strings.Split(sourceNamesStr, ",") // sourceNamesSls is of type []string
 
 	// slice for storing list of configs of DB connections to servers (sources)
-	dbConfigs := readConfig(dbConfigFileName) // returns map[string]Source
+	// dbConfigs := readConfig(dbConfigFileName) // returns map[string]Source
+	dbConfigs, err := readConfig(dbConfigFileName) // returns map[string]Source
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error reading config file: %v", err), http.StatusInternalServerError)
+		return
+	}
 
 	for _, src := range sourceNamesSls {
 
@@ -179,11 +184,6 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(w.Header())
 		// fmt.Fprintf(w, htmlOutput)
 	}
-}
-
-func generalStatHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("<p>DEBUG: hello from generalStatHandler</p>"))
-	renderGeneralStatHandler(w, r)
 }
 
 func main() {
