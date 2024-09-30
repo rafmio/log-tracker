@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"text/template"
@@ -10,15 +11,40 @@ import (
 type ltGeneralStats struct {
 	dbConfigFilePath   string             // the path to the database connection configuration file
 	dbConfigs          map[string]Source  // map database connection configurations returned by readConfig()
-	dsn                string             // data source name
+	dsns               map[string]string  // data source names for every database
 	db                 *sql.DB            // connection returned by sql.Open()
 	tmpl               *template.Template // html template parsed from a file
 	totalNumberEntries map[string]int
 	uniqueIpCount      map[string]int
 }
 
-func (d *ltGeneralStats) setDbConfigFilePath() {
-	d.dbConfigFilePath = "db-config.json"
+func (l *ltGeneralStats) setDbConfigFilePath() {
+	l.dbConfigFilePath = "db-config.json"
+}
+
+func (l *ltGeneralStats) setDsn() {
+	dsnStringTemplate := "host=%s port=%s user=%s dbname=%s password=%s sslmode=%s"
+
+	for _, dbConfig := range l.dbConfigs {
+		l.dsns[dbConfig.Name] = fmt.Sprintf(dsnStringTemplate,
+			dbConfig.Host,
+			dbConfig.Port,
+			dbConfig.User,
+			dbConfig.DBName,
+			dbConfig.Password,
+			dbConfig.SslMode,
+		)
+	}
+
+	// l.dsn = fmt.Sprintf(dsnStringTemplate,
+	// 	srcConf.Host,
+	// 	srcConf.Port,
+	// 	srcConf.User,
+	// 	srcConf.DBName,
+	// 	srcConf.Password,
+	// 	srcConf.SslMode,
+	// )
+
 }
 
 // the final result of this functions - HTML code of three-column table
