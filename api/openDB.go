@@ -1,30 +1,43 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
-	"net/http"
+	"encoding/json"
+	"log"
+	"os"
 )
 
-func openDB(srcConf *Source) (DB, error) {
-	db, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
-		srcConf.Host,
-		srcConf.Port,
-		srcConf.User,
-		srcConf.DBName,
-		srcConf.Password,
-		srcConf.SslMode,
-	))
+type ConnectDBConfig struct {
+	DriverName string `json:"DriverName"`
+	Name       string `json:"Name"`
+	Host       string `json:"Host"`
+	Port       string `json:"Port"`
+	DBName     string `json:"DBName"`
+	User       string `json:"User"`
+	TableName  string `json:"TableName"`
+	Password   string `json:"Password"`
+	SslMode    string `json:"SslMode"`
+}
 
+func setDbConfigFilePath() string {
+	return "db-config.json"
+}
+
+func readConfig(dbConfigFilePath string) (map[string]ConnectDBConfig, error) {
+	// reading file with configuration for DB connection
+	file, err := os.ReadFile(dbConfigFilePath)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error connecting to DB: %v", err), http.StatusInternalServerError)
-		return nil, err
+		log.Println("Opening config file:", err)
 	}
 
-	if err = db.Ping(); err != nil {
-		http.Error(w, fmt.Sprintf("Error pinging DB: %v", err), http.StatusInternalServerError)
-		return nil, err
+	// unmarshalling JSON data to struct
+	var servers map[string]ConnectDBConfig // TODO: rewrite with 'make'
+
+	dbConfig := make(map[string]ConnectDBConfig))
+
+	err = json.Unmarshal(file, &servers)
+	if err != nil {
+		log.Println("Unmarshalling JSON:", err)
 	}
 
-	return nil, nil
+	return servers
 }
