@@ -2,11 +2,24 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"text/template"
 )
+
+type Source struct {
+	Name      string `json:"Name"`
+	Host      string `json:"Host"`
+	Port      string `json:"Port"`
+	DBName    string `json:"DBName"`
+	User      string `json:"User"`
+	TableName string `json:"TableName"`
+	Password  string `json:"Password"`
+	SslMode   string `json:"SslMode"`
+}
 
 type ltGeneralStats struct {
 	dbConfigFilePath   string             // the path to the database connection configuration file
@@ -22,6 +35,24 @@ func (l *ltGeneralStats) setDbConfigFilePath() {
 	l.dbConfigFilePath = "db-config.json"
 }
 
+func (l *ltGeneralStats) readConfig(dbConfigFilePath string) error {
+	// reading file with configuration for DB connection
+	file, err := os.ReadFile(dbConfigFilePath)
+	if err != nil {
+		log.Println("Opening config file:", err)
+	}
+
+	// unmarshalling JSON data to struct
+	dbConfig := make(map[string]Source)
+
+	err = json.Unmarshal(file, &dbConfig)
+	if err != nil {
+		log.Println("Unmarshalling JSON:", err)
+	}
+
+	return err
+}
+
 func (l *ltGeneralStats) setDsn() {
 	dsnStringTemplate := "host=%s port=%s user=%s dbname=%s password=%s sslmode=%s"
 
@@ -35,16 +66,6 @@ func (l *ltGeneralStats) setDsn() {
 			dbConfig.SslMode,
 		)
 	}
-
-	// l.dsn = fmt.Sprintf(dsnStringTemplate,
-	// 	srcConf.Host,
-	// 	srcConf.Port,
-	// 	srcConf.User,
-	// 	srcConf.DBName,
-	// 	srcConf.Password,
-	// 	srcConf.SslMode,
-	// )
-
 }
 
 // the final result of this functions - HTML code of three-column table
