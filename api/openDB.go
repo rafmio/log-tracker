@@ -30,14 +30,12 @@ func readConfig(dbConfigFilePath string) (map[string]ConnectDBConfig, error) {
 	}
 
 	// unmarshalling JSON data to struct
-	var servers map[string]ConnectDBConfig // TODO: rewrite with 'make'
+	dbConfigs := make(map[string]ConnectDBConfig)
 
-	dbConfig := make(map[string]ConnectDBConfig))
-
-	err = json.Unmarshal(file, &servers)
+	err = json.Unmarshal(file, &dbConfigs)
 	if err != nil {
 		log.Println("Unmarshalling JSON:", err)
 	}
 
-	return servers
+	return dbConfigs, err
 }
