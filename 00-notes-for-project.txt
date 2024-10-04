@@ -57,3 +57,5 @@ host    all             all             147.45.226.19/32        md5 # added by R
 host    all             all             92.255.199.163/32       md5 # added by Raf
 
 ---------
+
+Терминал на сайте: https://xtermjs.org/
