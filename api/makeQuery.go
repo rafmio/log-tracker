@@ -11,6 +11,7 @@ func newGeneralStatQueryParams() *generalStatQueryParams {
 	newGSQP.statIndicators = make(map[string]string)
 	newGSQP.statIndicators["totalNumberEntries"] = "Total number of entries"
 	newGSQP.statIndicators["uniqueIpCount"] = "Unique IP count"
+	newGSQP.statIndicators["entriesPerDay"] = "Average number of entries per day"
 
 	newGSQP.queryStatIndicators = make(map[string]string)
 	newGSQP.queryStatIndicators["totalNumberEntries"] = `SELECT COUNT(*) FROM lg_tab;`

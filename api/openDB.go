@@ -12,16 +12,17 @@ type ConnectDBConfig struct {
 	DriverName  string `json:"DriverName"`  // e.g. "postgres"
 	Name        string `json:"Name"`        // server's name for internal using in code, mapping etc ('cute_ganymede')
 	DisplayName string `json:"DisplayName"` // the same name as 'Name', only for display ('Cute Ganymede')
-	Host        string `json:"Host"`        // IP, localhost, etc
-	Port        string `json:"Port"`
-	DBName      string `json:"DBName"` // name of DB inside of 'PostgreSQL'
-	User        string `json:"User"`
-	TableName   string `json:"TableName"` // name of the table inside certain DB
-	Password    string `json:"Password"`
-	SslMode     string `json:"SslMode"`
+	Host        string `json:"Host"`        // "194.58.102.129", "localhost", etc
+	Port        string `json:"Port"`        // port number, e.g. "5432", "8543", etc
+	DBName      string `json:"DBName"`      // name of DB inside of 'PostgreSQL'
+	User        string `json:"User"`        // username "raf", "postgres", etc
+	TableName   string `json:"TableName"`   // name of the table inside certain DB
+	Password    string `json:"Password"`    // password
+	SslMode     string `json:"SslMode"`     // SSL mode, etc "disable", "require", "verify-full", etc"
 }
 
-func setDbConfigFilePath() string {
+// Setting the path from where we will read the configuration file to connect to the database
+func setDBconfigFilePath() string {
 	return "db-config.json"
 }
 
