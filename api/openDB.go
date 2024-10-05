@@ -99,5 +99,5 @@ func openDBs(dsns map[string]string, driverName string) (map[string]*sql.DB, err
 		dbs[name] = db
 	}
 
-	return dbs, nil
+	return dbs, nil // don't forget to db.Close()!
 }
