@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sync"
 )
 
 type ConnectDBConfig struct {
@@ -83,20 +84,36 @@ func openDBs(dsns map[string]string, driverName string) (map[string]*sql.DB, err
 
 	dbs := make(map[string]*sql.DB) // variable for storing collection of DBs
 
-	for name, dsn := range dsns {
-		db, err := sql.Open(driverName, dsn)
-		if err != nil {
-			log.Println("Opening DB:", err)
-			return nil, err
-		}
+	var wg sync.WaitGroup
 
-		// verify a connection to the database is still alive
-		if err = db.Ping(); err != nil {
-			log.Println("Pinging DB:", err)
-			return nil, err
-		}
+	openDbErrs := make(map[string]error) // map[serverName]error
 
-		dbs[name] = db
+	// sql.Open() every source (database on certain server) in separate goroutine
+	for serverName, dsn := range dsns {
+		wg.Add(1)
+
+		go func(serverName, dsn string) {
+			db, err := sql.Open(driverName, dsn)
+			if err != nil {
+				log.Printf("Opening %s DB: %v\n", serverName, err)
+				openDbErrs[serverName] = err
+			}
+			// verify a connection to the database is still alive
+			if err = db.Ping(); err != nil {
+				log.Printf("Pinging %s DB: %v\n", serverName, err)
+				openDbErrs[serverName] = err
+			}
+
+			dbs[serverName] = db
+
+			defer wg.Done()
+		}(serverName, dsn)
+	}
+
+	wg.Wait()
+
+	if len(openDbErrs) == len(dsns) {
+		return nil, fmt.Errorf("No database is available")
 	}
 
 	return dbs, nil // don't forget to db.Close()!
