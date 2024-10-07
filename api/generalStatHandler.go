@@ -10,6 +10,7 @@ type ltGeneralStats struct {
 	dbConfigs        map[string]ConnectDBConfig // map database connection configurations returned by readConfig()
 	dsns             map[string]string          // data source names for every database, returned by setDSNs(). Format: map["server_name"]"formatString"
 	dbs              map[string]*sql.DB         // connections returned by sql.Open() - don't forget to db.Close()!
+	openDbErrs       map[string]error           // errors returned by sql.Open()
 
 	// SQL query parameters
 	statIndicators      map[string]string // names of statistical indicators: map["internalName"]"name for displaying"
@@ -29,16 +30,11 @@ func (lt *ltGeneralStats) setDBconnectionConfigs() error {
 		return err
 	}
 
+	lt.dsns = make(map[string]string)
 	setDSNs(lt.dsns, lt.dbConfigs)
 
-	// for _, dbConfig := range lt.dbConfigs {
-	// 	db, err := sql.Open(dbConfig.DriverName, lt.dsns[dbConfig.Name])
-	// 	if err != nil {
-	// 		return err
-	// 	}
-
-	// 	lt.dbs[dbConfig.Name] = db // don't forget to db.Close()!
-	// }
+	lt.dbs = make(map[string]*sql.DB)
+	lt.openDbErrs = make(map[string]error)
 
 	return nil
 }

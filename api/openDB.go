@@ -68,7 +68,7 @@ func setDSNs(dsns map[string]string, dbConfigs map[string]ConnectDBConfig) {
 	}
 }
 
-func openDBs(dsns map[string]string, driverName string) (map[string]*sql.DB, error) {
+func openDBs(dsns map[string]string) (map[string]*sql.DB, map[string]error) {
 
 	// check if driverName is empty
 	if driverName == "" {
@@ -82,11 +82,11 @@ func openDBs(dsns map[string]string, driverName string) (map[string]*sql.DB, err
 		return nil, fmt.Errorf("The variable of the map with the DSNs is empty or nil")
 	}
 
-	dbs := make(map[string]*sql.DB) // variable for storing collection of DBs
+	dbs := make(map[string]*sql.DB)      // variable for storing collection of DBs
+	openDbErrs := make(map[string]error) // map[serverName]error
 
 	var wg sync.WaitGroup
-
-	openDbErrs := make(map[string]error) // map[serverName]error
+	var mu sync.Mutex
 
 	// sql.Open() every source (database on certain server) in separate goroutine
 	for serverName, dsn := range dsns {
@@ -96,15 +96,23 @@ func openDBs(dsns map[string]string, driverName string) (map[string]*sql.DB, err
 			db, err := sql.Open(driverName, dsn)
 			if err != nil {
 				log.Printf("Opening %s DB: %v\n", serverName, err)
+
+				mu.Lock()
 				openDbErrs[serverName] = err
+				mu.Unlock()
 			}
 			// verify a connection to the database is still alive
 			if err = db.Ping(); err != nil {
 				log.Printf("Pinging %s DB: %v\n", serverName, err)
+
+				mu.Lock()
 				openDbErrs[serverName] = err
+				mu.Unlock()
 			}
 
+			mu.Lock()
 			dbs[serverName] = db
+			mu.Unlock()
 
 			defer wg.Done()
 		}(serverName, dsn)
@@ -114,6 +122,8 @@ func openDBs(dsns map[string]string, driverName string) (map[string]*sql.DB, err
 
 	if len(openDbErrs) == len(dsns) {
 		return nil, fmt.Errorf("No database is available")
+	} else if len(openDbErrs) > 0 && len(openDbErrs) < len(dsns) {
+		return dbs, fmt.Errorf("Some databases are not available")
 	}
 
 	return dbs, nil // don't forget to db.Close()!
