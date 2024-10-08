@@ -8,6 +8,9 @@ import (
 	"log"
 	"os"
 	"sync"
+
+	// import the PostgreSQL driver for datebase/sql
+	_ "github.com/lib/pq" // $ go get .
 )
 
 var (
@@ -88,8 +91,7 @@ func (dbC *DBConnections) setDSNs() {
 
 func (dbC *DBConnections) openDBs() error {
 
-	// driverName := "postgres"
-
+	// check if dsns is empty or nil
 	if len(dbC.dsns) == 0 || dbC.dsns == nil {
 		log.Println(ErrDSNMapEmpty)
 		return ErrDSNMapEmpty
@@ -136,6 +138,7 @@ func (dbC *DBConnections) openDBs() error {
 				mu.Unlock()
 			}
 
+			// add connection to collection of DBs
 			mu.Lock()
 			dbC.dbs[serverName] = db
 			mu.Unlock()
