@@ -3,11 +3,27 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"os"
 	"sync"
 )
+
+var (
+	ErrDriverNameEmpty = errors.New("driver name is empty")
+	ErrDSNMapEmpty     = errors.New("DSN map is empty or nil")
+	ErrOpeningDatabase = errors.New("error opening database")
+	ErrPingingDatabase = errors.New("error pinging database")
+)
+
+type DBConnections struct {
+	dbConfigFilePath string                     // the path to the database connection configuration file - setDbConfigFilePath()
+	dbConfigs        map[string]ConnectDBConfig // map database connection configurations returned by readConfig()
+	dsns             map[string]string          // data source names for every database, returned by setDSNs(). Format: map["server_name"]"formatString"
+	dbs              map[string]*sql.DB         // connections returned by sql.Open() - don't forget to db.Close()!
+	openDbErrs       map[string]error           // errors returned by sql.Open()
+}
 
 type ConnectDBConfig struct {
 	DriverName  string `json:"DriverName"`  // e.g. "postgres"
@@ -23,41 +39,43 @@ type ConnectDBConfig struct {
 }
 
 // Setting the path from where we will read the configuration file to connect to the database
-func setDBconfigFilePath() string {
-	return "db-config.json"
+func (dbC *DBConnections) setDBconfigFilePath() {
+	dbC.dbConfigFilePath = "db-config.json"
 }
 
-func readConfig(dbConfigFilePath string) (map[string]ConnectDBConfig, error) {
+func (dbC *DBConnections) readConfig() error {
 
 	// check if dbConfigFilePath is empty
-	if dbConfigFilePath == "" {
+	if dbC.dbConfigFilePath == "" {
 		log.Println("The variable of the path to the file with the configuration of the database connection is empty")
-		return nil, fmt.Errorf("The variable of the path to the file with the configuration of the database connection is empty")
+		return fmt.Errorf("The variable of the path to the file with the configuration of the database connection is empty")
 	}
 
 	// reading file with configuration for DB connection
-	file, err := os.ReadFile(dbConfigFilePath)
+	file, err := os.ReadFile(dbC.dbConfigFilePath)
 	if err != nil {
 		log.Println("Opening config file:", err)
-		return nil, err
+		return err
 	}
 
 	// unmarshalling JSON data to struct
-	dbConfigs := make(map[string]ConnectDBConfig) // variable for storing unmarshalled data
-	err = json.Unmarshal(file, &dbConfigs)
+	dbC.dbConfigs = make(map[string]ConnectDBConfig) // variable for storing unmarshalled data
+	err = json.Unmarshal(file, &dbC.dbConfigs)
 	if err != nil {
 		log.Println("Unmarshalling JSON:", err)
-		return nil, err
+		return err
 	}
 
-	return dbConfigs, err
+	return nil
 }
 
-func setDSNs(dsns map[string]string, dbConfigs map[string]ConnectDBConfig) {
+func (dbC *DBConnections) setDSNs() {
 	formatString := "host=%s port=%s user=%s dbname=%s password=%s sslmode=%s"
 
-	for _, dbConfig := range dbConfigs {
-		dsns[dbConfig.Name] = fmt.Sprintf(formatString,
+	dbC.dsns = make(map[string]string)
+
+	for _, dbConfig := range dbC.dbConfigs {
+		dbC.dsns[dbConfig.Name] = fmt.Sprintf(formatString,
 			dbConfig.Host,
 			dbConfig.Port,
 			dbConfig.User,
@@ -68,50 +86,58 @@ func setDSNs(dsns map[string]string, dbConfigs map[string]ConnectDBConfig) {
 	}
 }
 
-func openDBs(dsns map[string]string) (map[string]*sql.DB, map[string]error) {
+func (dbC *DBConnections) openDBs() error {
 
-	// check if driverName is empty
-	if driverName == "" {
-		log.Println("The variable of the name of the driver is empty")
-		return nil, fmt.Errorf("The variable of the name of the driver is empty")
+	// driverName := "postgres"
+
+	if len(dbC.dsns) == 0 || dbC.dsns == nil {
+		log.Println(ErrDSNMapEmpty)
+		return ErrDSNMapEmpty
 	}
 
-	// check if dsns is empty or nil
-	if len(dsns) == 0 || dsns == nil {
-		log.Println("The variable of the map with the DSNs is empty or nil")
-		return nil, fmt.Errorf("The variable of the map with the DSNs is empty or nil")
-	}
-
-	dbs := make(map[string]*sql.DB)      // variable for storing collection of DBs
-	openDbErrs := make(map[string]error) // map[serverName]error
+	dbC.dbs = make(map[string]*sql.DB)      // variable for storing collection of DBs
+	dbC.openDbErrs = make(map[string]error) // map[serverName]error
 
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 
 	// sql.Open() every source (database on certain server) in separate goroutine
-	for serverName, dsn := range dsns {
+	for serverName, dsn := range dbC.dsns {
 		wg.Add(1)
 
 		go func(serverName, dsn string) {
-			db, err := sql.Open(driverName, dsn)
-			if err != nil {
-				log.Printf("Opening %s DB: %v\n", serverName, err)
+			driverName := dbC.dbConfigs[serverName].DriverName
+
+			// check if dsns is empty or nil
+			if driverName == "" {
+				log.Println(ErrDriverNameEmpty)
 
 				mu.Lock()
-				openDbErrs[serverName] = err
+				dbC.openDbErrs[serverName] = ErrDriverNameEmpty
 				mu.Unlock()
 			}
-			// verify a connection to the database is still alive
-			if err = db.Ping(); err != nil {
-				log.Printf("Pinging %s DB: %v\n", serverName, err)
+
+			// open database
+			db, err := sql.Open(driverName, dsn)
+			if err != nil {
+				log.Println(ErrOpeningDatabase)
 
 				mu.Lock()
-				openDbErrs[serverName] = err
+				dbC.openDbErrs[serverName] = err
+				mu.Unlock()
+			}
+
+			// verify a connection to the database is still alive
+			if err = db.Ping(); err != nil {
+				log.Println(ErrPingingDatabase)
+
+				mu.Lock()
+				dbC.openDbErrs[serverName] = err
 				mu.Unlock()
 			}
 
 			mu.Lock()
-			dbs[serverName] = db
+			dbC.dbs[serverName] = db
 			mu.Unlock()
 
 			defer wg.Done()
@@ -120,11 +146,5 @@ func openDBs(dsns map[string]string) (map[string]*sql.DB, map[string]error) {
 
 	wg.Wait()
 
-	if len(openDbErrs) == len(dsns) {
-		return nil, fmt.Errorf("No database is available")
-	} else if len(openDbErrs) > 0 && len(openDbErrs) < len(dsns) {
-		return dbs, fmt.Errorf("Some databases are not available")
-	}
-
-	return dbs, nil // don't forget to db.Close()!
+	return nil // don't forget to db.Close()!
 }
