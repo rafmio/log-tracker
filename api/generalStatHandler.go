@@ -1,6 +1,7 @@
 package main
 
 type ltGeneralStats struct {
+	*DBConnections
 
 	// SQL query parameters
 	statIndicators      map[string]string // names of statistical indicators: map["internalName"]"name for displaying"
@@ -27,9 +28,4 @@ func (lt *ltGeneralStats) generalStatQueryParams() {
     		GROUP BY DATE(tmstmp)
 		) AS daily_counts;
 		 `
-}
-
-func (lt *ltGeneralStats) makeQuery(queryResults map[string]float64) error {
-
-	return nil
 }
