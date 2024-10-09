@@ -4,8 +4,8 @@ type ltGeneralStats struct {
 	*DBConnections
 
 	// SQL query parameters
-	statIndicators      map[string]string // names of statistical indicators: map["internalName"]"name for displaying"
-	queryStatIndicators map[string]string // SQL queries itself: map["internalName"]"SQL query"
+	// statIndicators      map[string]string // names of statistical indicators: map["internalName"]"name for displaying"
+	// queryStatIndicators map[string]string // SQL queries itself: map["internalName"]"SQL query"
 
 	// the result of sending SQL queries to the database
 	queryResults map[string]float64 // map[indicatorName]float64

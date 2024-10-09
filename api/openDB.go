@@ -50,8 +50,8 @@ func (dbC *DBConnections) readConfig() error {
 
 	// check if dbConfigFilePath is empty
 	if dbC.dbConfigFilePath == "" {
-		log.Println("The variable of the path to the file with the configuration of the database connection is empty")
-		return fmt.Errorf("The variable of the path to the file with the configuration of the database connection is empty")
+		log.Println("Database config file path is empty")
+		return fmt.Errorf("Database config file path is empty")
 	}
 
 	// reading file with configuration for DB connection
