@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"errors"
+	"sync"
 )
 
 // type generalStatsPerServer struct {
@@ -60,26 +61,32 @@ func (g *generalStatQueryParams) setStatIndicators() {
 // range queryStatIndicators map and fill generalStatResults map
 func (g *generalStatQueryParams) makeGeneralStatQuery(dbs map[string]*sql.DB, openDbErrs map[string]error) error {
 
-	if len(g.queryStatIndicators) == 0 {
+	switch {
+	case len(g.statIndicators) == 0:
 		return ErrListOfStatIndicatorsIsEmpty
-	} else if len(dbs) == 0 {
+	case len(dbs) == 0:
 		return ErrDSNMapEmpty
-	} else if len(openDbErrs) == 0 {
+	case len(openDbErrs) == 0:
 		return ErrOpenDBErrsMapEmpty
 	}
 
 	g.generalStatResults = make(map[string]map[string]string)
 	g.generalStatErrors = make(map[string]map[string]error)
 
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+
 	// range openDbErrs, if error == nil - try to query, else - skip
-	for dbName, dbErr := range openDbErrs {
-		if dbErr == nil {
-			for statIndName, query := range g.queryStatIndicators {
-				rows, err := dbs[dbName].Query(query)
-				if err != nil {
+	for dbName, dbErr := range openDbErrs { // range DB errors
+		if dbErr == nil { // if every certain connections is successful
+			for statIndName, query := range g.queryStatIndicators { // range over queryStatIndicators map
+				rows, err := dbs[dbName].Query(query) // make query from queryStatIndicators map
+				if err != nil {                       // if query failed
+					// add error to generalStatErrors map
 					g.generalStatErrors[dbName] = make(map[string]error)
 					g.generalStatErrors[dbName][statIndName] = err
-				} else {
+				} else { // if query success
+					// add result to generalStatResults map
 					defer rows.Close()
 					var result string
 					for rows.Next() {
