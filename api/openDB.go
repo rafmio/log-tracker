@@ -14,10 +14,11 @@ import (
 )
 
 var (
-	ErrDriverNameEmpty = errors.New("driver name is empty")
-	ErrDSNMapEmpty     = errors.New("DSN map is empty or nil")
-	ErrOpeningDatabase = errors.New("error opening database")
-	ErrPingingDatabase = errors.New("error pinging database")
+	ErrDriverNameEmpty    = errors.New("driver name is empty")
+	ErrDSNMapEmpty        = errors.New("DSN map is empty or nil")
+	ErrOpeningDatabase    = errors.New("error opening database")
+	ErrPingingDatabase    = errors.New("error pinging database")
+	ErrOpenDBErrsMapEmpty = errors.New("openDBErrsMap is empty or nil")
 )
 
 type DBConnections struct {
