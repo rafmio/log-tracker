@@ -1,23 +1,23 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 )
 
 type LogEntry struct {
 	SeqNum string
-	TmStmp time.Time
-	SrcIP  string
+	TmStmp time.Time // timestamp
+	SrcIP  string    // source IP address
 	Len    string
 	Ttl    string
 	Id     string // will named 'innerid' in database
-	Spt    string
-	Dpt    string
+	Spt    string // source port
+	Dpt    string // destination port
 	Window string // will named 'wndw' in database
 }
 
+// URL params names
 const (
 	sourceNameParam = "source_name"
 	startDateParam  = "start_date"
@@ -25,7 +25,7 @@ const (
 	layoutDateTime  = "2006-01-02T15:04"
 )
 
-type queryParams struct {
+type fetchEntriesQueryParams struct {
 	sourceNameParam string
 	startDateParam  string
 	endDateParam    string
@@ -41,7 +41,7 @@ The format of the received request (example):
 https://194.58.102.129:8082/logtracker/fetch_entries?source_name=cute_ganymede&start_date=2024-08-21T14:35&end_date=2024-08-22T11:50
 
 parameter names:
-- source_ame: Name of the source (black_oxygenium or cute_ganymede)
+- source_name: Name of the source (black_oxygenium or cute_ganymede)
 - start_date: Start date and time (ISO 8601) of the data to fetch
 - end_date: End date and time (ISO 8601) of the data to fetch
 */
@@ -60,20 +60,25 @@ func fetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	startDate, err := time.Parse(layoutDateTime, r.FormValue(startDateParam))
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Invalid start_date: %v", err), http.StatusBadRequest)
-		return
-	}
-	endDate, err := time.Parse(layoutDateTime, r.FormValue(endDateParam))
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Invalid end_date: %v", err), http.StatusBadRequest)
-		return
-	}
+	fetchEntriesPQ := newFetchEntriesQueryParams
 
-	// check if interval is valid (less than 48 hours)
-	if endDate.Sub(startDate) > time.Hour*48 {
-		http.Error(w, "<p>Interval is too long.Please set the interval less than 48 hours</p>", http.StatusBadRequest)
-		return
-	}
+	var dateRange [2]time.Time // [2]time.Time[startDate, endDate]
+	dateRange, err = parseAndValidateDateRange(startDateParam, endDateParam, layoutDateTime)
+
+	// startDate, err := time.Parse(layoutDateTime, r.FormValue(startDateParam))
+	// if err != nil {
+	// 	http.Error(w, fmt.Sprintf("Invalid start_date: %v", err), http.StatusBadRequest)
+	// 	return
+	// }
+	// endDate, err := time.Parse(layoutDateTime, r.FormValue(endDateParam))
+	// if err != nil {
+	// 	http.Error(w, fmt.Sprintf("Invalid end_date: %v", err), http.StatusBadRequest)
+	// 	return
+	// }
+
+	// // check if interval is valid (less than 48 hours)
+	// if endDate.Sub(startDate) > time.Hour*48 {
+	// 	http.Error(w, "<p>Interval is too long.Please set the interval less than 48 hours</p>", http.StatusBadRequest)
+	// 	return
+	// }
 }

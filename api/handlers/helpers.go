@@ -3,10 +3,13 @@ package main
 import (
 	"errors"
 	"net/http"
+	"time"
 )
 
 var (
-	ErrParsingForm = errors.New("Error parsing form")
+	ErrParsingForm        = errors.New("Error parsing form")
+	ErrIncorrectSetDate   = errors.New("Invalid start or end date")
+	ErrIncorrectDateRange = errors.New("Interval is more than 48 hours")
 )
 
 func preProcessResponse(w http.ResponseWriter, r *http.Request) error {
@@ -31,4 +34,25 @@ func preProcessResponse(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	return nil
+}
+
+func parseAndValidateDateRange(startDateParam, endDateParam, layoutDateTime string) ([2]time.Time, error) {
+	var dateRange [2]time.Time
+
+	startDate, err := time.Parse(layoutDateTime, r.FormValue(startDateParam))
+	if err != nil {
+		return dateRange, ErrIncorrectSetDate
+	}
+	endDate, err := time.Parse(layoutDateTime, r.FormValue(endDateParam))
+	if err != nil {
+		return dateRange, ErrIncorrectSetDate
+	}
+
+	// check if interval is valid (less than 48 hours)
+	if endDate.Sub(startDate) > time.Hour*48 {
+		return dateRange, ErrIncorrectDateRange
+	}
+
+	dateRange = [2]time.Time{startDate, endDate}
+	return dateRange, nil
 }
