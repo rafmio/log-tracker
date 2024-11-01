@@ -1,0 +1,18 @@
+Possible HTTP GET-requests to API:
+
+FETCH
+/logtracker/fetch_entries
+
+Parameters:
+	sourceNameParam  = "source_name"
+	startDateParam   = "start_date"
+	endDateParam     = "end_date"
+
+
+TOTAL STATISTICS
+/logtracker/statistics/total_stats
+
+There are no parameters here. 
+This GET-request is made after the page is loaded
+
+
