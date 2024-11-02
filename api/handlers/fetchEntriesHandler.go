@@ -46,11 +46,7 @@ parameter names:
 - end_date: End date and time (ISO 8601) of the data to fetch
 */
 func fetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
-	// preProcessResponse make:
-	// 	1. checking whether the HTTP request method is a GET method
-	// 	2. setting headers
-	// 	3. parsing request's parameters and populate r.Form
-	err := preProcessResponse(w, r)
+	err := processUrl(w, r)
 	if err != nil {
 		if err == http.ErrNotSupported {
 			http.Error(w, "Only GET requests are supported", http.StatusMethodNotAllowed)
@@ -60,25 +56,4 @@ func fetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	fetchEntriesPQ := newFetchEntriesQueryParams
-
-	var dateRange [2]time.Time // [2]time.Time[startDate, endDate]
-	dateRange, err = parseAndValidateDateRange(startDateParam, endDateParam, layoutDateTime)
-
-	// startDate, err := time.Parse(layoutDateTime, r.FormValue(startDateParam))
-	// if err != nil {
-	// 	http.Error(w, fmt.Sprintf("Invalid start_date: %v", err), http.StatusBadRequest)
-	// 	return
-	// }
-	// endDate, err := time.Parse(layoutDateTime, r.FormValue(endDateParam))
-	// if err != nil {
-	// 	http.Error(w, fmt.Sprintf("Invalid end_date: %v", err), http.StatusBadRequest)
-	// 	return
-	// }
-
-	// // check if interval is valid (less than 48 hours)
-	// if endDate.Sub(startDate) > time.Hour*48 {
-	// 	http.Error(w, "<p>Interval is too long.Please set the interval less than 48 hours</p>", http.StatusBadRequest)
-	// 	return
-	// }
 }
