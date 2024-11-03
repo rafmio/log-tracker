@@ -29,11 +29,7 @@ parameter names:
 - end_date: End date and time (ISO 8601) of the data to fetch
 */
 func fetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
-	// preProcessResponse make:
-	// 	1. checking whether the HTTP request method is a GET method
-	// 	2. setting headers
-	// 	3. parsing request's parameters and populate r.Form
-	err := preProcessResponse(w, r)
+	err := processUrl(w, r)
 	if err != nil {
 		if err == http.ErrNotSupported {
 			http.Error(w, "Only GET requests are supported", http.StatusMethodNotAllowed)
@@ -43,6 +39,7 @@ func fetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+<<<<<<< HEAD
 	fep := newFetchEntriesParams(w, r)
 
 	err = fep.parseAndValidateDateRange()
@@ -50,4 +47,6 @@ func fetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+=======
+>>>>>>> 94b458019f19ce295a241612a698ab8922e96574
 }
