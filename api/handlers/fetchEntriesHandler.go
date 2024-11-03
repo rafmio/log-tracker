@@ -17,23 +17,6 @@ type LogEntry struct {
 	Window string // will named 'wndw' in database
 }
 
-// URL params names
-const (
-	sourceNameParam = "source_name"
-	startDateParam  = "start_date"
-	endDateParam    = "end_date"
-	layoutDateTime  = "2006-01-02T15:04"
-)
-
-type fetchEntriesQueryParams struct {
-	sourceNameParam string
-	startDateParam  string
-	endDateParam    string
-	layoutDateTime  string
-	startDate       time.Time
-	endDate         time.Time
-}
-
 /*
 fetchEntriesHandler() handles incoming HTTP requests.
 
@@ -60,25 +43,11 @@ func fetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	fetchEntriesPQ := newFetchEntriesQueryParams
+	fep := newFetchEntriesParams(w, r)
 
-	var dateRange [2]time.Time // [2]time.Time[startDate, endDate]
-	dateRange, err = parseAndValidateDateRange(startDateParam, endDateParam, layoutDateTime)
-
-	// startDate, err := time.Parse(layoutDateTime, r.FormValue(startDateParam))
-	// if err != nil {
-	// 	http.Error(w, fmt.Sprintf("Invalid start_date: %v", err), http.StatusBadRequest)
-	// 	return
-	// }
-	// endDate, err := time.Parse(layoutDateTime, r.FormValue(endDateParam))
-	// if err != nil {
-	// 	http.Error(w, fmt.Sprintf("Invalid end_date: %v", err), http.StatusBadRequest)
-	// 	return
-	// }
-
-	// // check if interval is valid (less than 48 hours)
-	// if endDate.Sub(startDate) > time.Hour*48 {
-	// 	http.Error(w, "<p>Interval is too long.Please set the interval less than 48 hours</p>", http.StatusBadRequest)
-	// 	return
-	// }
+	err = fep.parseAndValidateDateRange()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 }
