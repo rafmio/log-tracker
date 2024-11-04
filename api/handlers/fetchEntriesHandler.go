@@ -53,6 +53,9 @@ func FetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// build SQL query
+	fep.buildFetchEntriesSQLString()
+
 	// DEBUG print
 	fmt.Fprintln(w, "start_date:", fep.startDate)
 	fmt.Fprintln(w, "end_date:", fep.endDate)

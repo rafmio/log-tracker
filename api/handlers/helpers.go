@@ -67,15 +67,6 @@ func newFetchEntriesParams(w http.ResponseWriter, r *http.Request) *fetchEntries
 	fep.tableName = "lg_tab"
 	fep.timeStampColumnName = "tmstmp"
 
-	preparedQuery := fmt.Sprintf(
-		fep.rawQueryStr,
-		fep.tableName,
-		fep.timeStampColumnName,
-		fep.startDate.String(),
-		fep.endDate.String(),
-	)
-	fep.preparedQuery = preparedQuery
-
 	return fep
 }
 
@@ -99,4 +90,14 @@ func (f *fetchEntriesParams) parseAndValidateDateRange() error {
 	f.endDate = endDate
 
 	return nil
+}
+
+func (f *fetchEntriesParams) buildFetchEntriesSQLString() {
+	f.preparedQuery = fmt.Sprintf(
+		f.rawQueryStr,
+		f.tableName,
+		f.timeStampColumnName,
+		f.startDate.String(),
+		f.endDate.String(),
+	)
 }
