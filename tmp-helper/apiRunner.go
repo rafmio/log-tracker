@@ -1,15 +1,23 @@
-package main
+package delete
 
 import (
 	"database/sql"
 	"fmt"
-	"html/template"
 	"net/http"
 	"strings"
-
-	// import the PostgreSQL driver for datebase/sql
-	_ "github.com/lib/pq" // $ go get .
+	"text/template"
 )
+
+// import (
+// 	"database/sql"
+// 	"fmt"
+// 	"html/template"
+// 	"net/http"
+// 	"strings"
+
+// 	// import the PostgreSQL driver for datebase/sql
+// 	_ "github.com/lib/pq" // $ go get .
+// )
 
 // type LogEntry struct {
 // 	SeqNum string
@@ -23,16 +31,16 @@ import (
 // 	Window string // will named 'wndw' in database
 // }
 
-const (
-	dbConfigFileName = "db-config.json"
-	// port             = ":8082" // in runAPI.go
-	// sourceNameParam = "source_name" // in fetchEntriesHandler.go
-	// startDateParam  = "start_date"
-	// endDateParam    = "end_date"
-	// layoutDateTime  = "2006-01-02T15:04"
-)
+// const (
+// 	dbConfigFileName = "db-config.json"
+// port             = ":8082" // in runAPI.go
+// sourceNameParam = "source_name" // in fetchEntriesHandler.go
+// startDateParam  = "start_date"
+// endDateParam    = "end_date"
+// layoutDateTime  = "2006-01-02T15:04"
+// )
 
-func fetchHandler(w http.ResponseWriter, r *http.Request) {
+func fefetchHandler(w http.ResponseWriter, r *http.Request) {
 
 	// SET HEADERS ----------------------------------------------
 	// w.Header().Set("Content-Type", "text/html; charset=utf-8")

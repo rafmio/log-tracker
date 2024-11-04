@@ -1,7 +1,8 @@
-package main
+package handlers
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -13,17 +14,22 @@ var (
 )
 
 type fetchEntriesParams struct {
-	sourceNameParam string
-	startDateParam  string
-	endDateParam    string
-	layoutDateTime  string
-	startDate       time.Time
-	endDate         time.Time
-	w               http.ResponseWriter
-	r               *http.Request
+	w                   http.ResponseWriter
+	r                   *http.Request
+	sourceNameParam     string
+	startDateParam      string
+	endDateParam        string
+	layoutDateTime      string
+	startDate           time.Time
+	endDate             time.Time
+	rawQueryStr         string
+	dbName              string
+	tableName           string
+	timeStampColumnName string
+	preparedQuery       string
 }
 
-func preProcessResponse(w http.ResponseWriter, r *http.Request) error {
+func processURL(w http.ResponseWriter, r *http.Request) error {
 	// checking whether the HTTP request method is a GET method
 	if r.Method != http.MethodGet {
 		http.Error(w, "Only GET requests are supported", http.StatusMethodNotAllowed)
@@ -49,23 +55,37 @@ func preProcessResponse(w http.ResponseWriter, r *http.Request) error {
 
 func newFetchEntriesParams(w http.ResponseWriter, r *http.Request) *fetchEntriesParams {
 	fep := new(fetchEntriesParams)
+	fep.w = w
+	fep.r = r
 	fep.sourceNameParam = "source_name"
 	fep.startDateParam = "start_date"
 	fep.endDateParam = "end_date"
 	fep.layoutDateTime = "2006-01-02T15:04"
-	fep.w = w
-	fep.r = r
+	// fep.rawQueryStr = `SELECT * FROM %s WHERE %s >= $1 AND %s <= $2`
+	fep.rawQueryStr = `SELECT * FROM %s WHERE %s BETWEEN %s AND %s`
+	fep.dbName = r.FormValue(fep.sourceNameParam)
+	fep.tableName = "lg_tab"
+	fep.timeStampColumnName = "tmstmp"
+
+	preparedQuery := fmt.Sprintf(
+		fep.rawQueryStr,
+		fep.tableName,
+		fep.timeStampColumnName,
+		fep.startDate.String(),
+		fep.endDate.String(),
+	)
+	fep.preparedQuery = preparedQuery
 
 	return fep
 }
 
 func (f *fetchEntriesParams) parseAndValidateDateRange() error {
 
-	startDate, err := time.Parse(f.layoutDateTime, r.FormValue(f.startDateParam))
+	startDate, err := time.Parse(f.layoutDateTime, f.r.FormValue(f.startDateParam))
 	if err != nil {
 		return ErrIncorrectSetDate
 	}
-	endDate, err := time.Parse(f.layoutDateTime, r.FormValue(f.endDateParam))
+	endDate, err := time.Parse(f.layoutDateTime, f.r.FormValue(f.endDateParam))
 	if err != nil {
 		return ErrIncorrectSetDate
 	}
@@ -74,6 +94,9 @@ func (f *fetchEntriesParams) parseAndValidateDateRange() error {
 	if endDate.Sub(startDate) > time.Hour*48 {
 		return ErrIncorrectDateRange
 	}
+
+	f.startDate = startDate
+	f.endDate = endDate
 
 	return nil
 }

@@ -1,9 +1,12 @@
 package main
 
-import "log"
+import (
+	"api/cmd"
+	"log"
+)
 
 func main() {
-	err := runAPI()
+	err := cmd.RunAPI()
 	if err != nil {
 		log.Printf("Error running API: %v\n", err)
 		return

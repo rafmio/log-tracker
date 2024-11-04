@@ -1,6 +1,7 @@
-package main
+package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -28,8 +29,12 @@ parameter names:
 - start_date: Start date and time (ISO 8601) of the data to fetch
 - end_date: End date and time (ISO 8601) of the data to fetch
 */
-func fetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
-	err := processUrl(w, r)
+func FetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
+	// preProcessResponse make:
+	// 	1. checking whether the HTTP request method is a GET method
+	// 	2. setting headers
+	// 	3. parsing request's parameters and populate r.Form
+	err := processURL(w, r)
 	if err != nil {
 		if err == http.ErrNotSupported {
 			http.Error(w, "Only GET requests are supported", http.StatusMethodNotAllowed)
@@ -39,7 +44,7 @@ func fetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-<<<<<<< HEAD
+	// new instance
 	fep := newFetchEntriesParams(w, r)
 
 	err = fep.parseAndValidateDateRange()
@@ -47,6 +52,11 @@ func fetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-=======
->>>>>>> 94b458019f19ce295a241612a698ab8922e96574
+
+	// DEBUG print
+	fmt.Fprintln(w, "start_date:", fep.startDate)
+	fmt.Fprintln(w, "end_date:", fep.endDate)
+	fmt.Fprintf(w, "\n")
+	fmt.Fprintln(w, "prepared query:", fep.preparedQuery)
+	// end of DEBUG
 }
