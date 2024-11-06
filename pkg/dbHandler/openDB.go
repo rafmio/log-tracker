@@ -44,7 +44,7 @@ type ConnectDBConfig struct {
 
 // Setting the path from where we will read the configuration file to connect to the database
 func (dbC *DBConnections) setDBconfigFilePath() {
-	dbC.dbConfigFilePath = "db-config.json"
+	dbC.dbConfigFilePath = "config/db-config.json"
 }
 
 func (dbC *DBConnections) readConfig() error {
