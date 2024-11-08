@@ -1,4 +1,4 @@
-package dbops
+package main
 
 import (
 	"database/sql"
@@ -21,6 +21,14 @@ var (
 	ErrOpenDBErrsMapEmpty = errors.New("openDBErrsMap is empty or nil")
 )
 
+type DBConnections struct {
+	dbConfigFilePath string                     // the path to the database connection configuration file - setDbConfigFilePath()
+	dbConfigs        map[string]ConnectDBConfig // map database connection configurations returned by readConfig()
+	dsns             map[string]string          // data source names for every database, returned by setDSNs(). Format: map["server_name"]"formatString"
+	dbs              map[string]*sql.DB         // connections returned by sql.Open() - don't forget to db.Close()!
+	openDbErrs       map[string]error           // errors returned by sql.Open()
+}
+
 type ConnectDBConfig struct {
 	DriverName  string `json:"DriverName"`  // e.g. "postgres"
 	Name        string `json:"Name"`        // server's name for internal using in code, mapping etc ('cute_ganymede')
@@ -29,11 +37,9 @@ type ConnectDBConfig struct {
 	Port        string `json:"Port"`        // port number, e.g. "5432", "8543", etc
 	DBName      string `json:"DBName"`      // name of DB inside of 'PostgreSQL'
 	User        string `json:"User"`        // username "raf", "postgres", etc
+	TableName   string `json:"TableName"`   // name of the table inside certain DB
 	Password    string `json:"Password"`    // password
 	SslMode     string `json:"SslMode"`     // SSL mode, etc "disable", "require", "verify-full", etc"
-	dsn         string // data source name
-	db          *sql.DB
-	err         error
 }
 
 // Setting the path from where we will read the configuration file to connect to the database
