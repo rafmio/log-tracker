@@ -3,7 +3,6 @@ package dbops
 import (
 	"database/sql"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -13,44 +12,45 @@ import (
 	_ "github.com/lib/pq" // $ go get .
 )
 
-var (
-	ErrDriverNameEmpty    = errors.New("driver name is empty")
-	ErrDSNMapEmpty        = errors.New("DSN map is empty or nil")
-	ErrOpeningDatabase    = errors.New("error opening database")
-	ErrPingingDatabase    = errors.New("error pinging database")
-	ErrOpenDBErrsMapEmpty = errors.New("openDBErrsMap is empty or nil")
-)
+// var (
+// 	ErrDriverNameEmpty    = errors.New("driver name is empty")
+// 	ErrDSNMapEmpty        = errors.New("DSN map is empty or nil")
+// 	ErrOpeningDatabase    = errors.New("error opening database")
+// 	ErrPingingDatabase    = errors.New("error pinging database")
+// 	ErrOpenDBErrsMapEmpty = errors.New("openDBErrsMap is empty or nil")
+// )
 
-type ConnectDBConfig struct {
-	DriverName  string `json:"DriverName"`  // e.g. "postgres"
-	Name        string `json:"Name"`        // server's name for internal using in code, mapping etc ('cute_ganymede')
-	DisplayName string `json:"DisplayName"` // the same name as 'Name', only for display ('Cute Ganymede')
-	Host        string `json:"Host"`        // "194.58.102.129", "localhost", etc
-	Port        string `json:"Port"`        // port number, e.g. "5432", "8543", etc
-	DBName      string `json:"DBName"`      // name of DB inside of 'PostgreSQL'
-	User        string `json:"User"`        // username "raf", "postgres", etc
-	Password    string `json:"Password"`    // password
-	SslMode     string `json:"SslMode"`     // SSL mode, etc "disable", "require", "verify-full", etc"
-	dsn         string // data source name
-	db          *sql.DB
-	err         error
+type DBConfig struct {
+	Name             string `json:"Name"` // server's name for internal using in code, mapping etc ('cute_ganymede')
+	DbConfigFilePath string
+	DisplayName      string `json:"DisplayName"` // the same name as 'Name', only for display ('Cute Ganymede')
+	DriverName       string `json:"DriverName"`  // e.g. "postgres"
+	Host             string `json:"Host"`        // "194.58.102.129", "localhost", etc
+	Port             string `json:"Port"`        // port number, e.g. "5432", "8543", etc
+	DBName           string `json:"DBName"`      // name of DB inside of 'PostgreSQL'
+	User             string `json:"User"`        // username "raf", "postgres", etc
+	Password         string `json:"Password"`    // password
+	SslMode          string `json:"SslMode"`     // SSL mode, etc "disable", "require", "verify-full", etc"
+	DSN              string // data source name
+	DB               *sql.DB
+	Err              error
 }
 
 // Setting the path from where we will read the configuration file to connect to the database
-func (dbC *DBConnections) setDBconfigFilePath() {
-	dbC.dbConfigFilePath = "config/db-config.json"
+func (d *DBConfig) SetDBconfigFilePath() {
+	d.DbConfigFilePath = "config/db-config.json"
 }
 
-func (dbC *DBConnections) readConfig() error {
+func (d *DBConfig) ReadConfig() error {
 
 	// check if dbConfigFilePath is empty
-	if dbC.dbConfigFilePath == "" {
+	if d.DbConfigFilePath == "" {
 		log.Println("Database config file path is empty")
 		return fmt.Errorf("Database config file path is empty")
 	}
 
 	// reading file with configuration for DB connection
-	file, err := os.ReadFile(dbC.dbConfigFilePath)
+	file, err := os.ReadFile(d.DbConfigFilePath)
 	if err != nil {
 		log.Println("Opening config file:", err)
 		return err
