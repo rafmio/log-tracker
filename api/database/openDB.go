@@ -57,8 +57,8 @@ func (d *DBConfig) ReadConfig() error {
 	}
 
 	// unmarshalling JSON data to struct
-	dbC.dbConfigs = make(map[string]ConnectDBConfig) // variable for storing unmarshalled data
-	err = json.Unmarshal(file, &dbC.dbConfigs)
+	d.dbConfigs = make(map[string]DBConfig) // variable for storing unmarshalled data
+	err = json.Unmarshal(file, &d.dbConfigs)
 	if err != nil {
 		log.Println("Unmarshalling JSON:", err)
 		return err
