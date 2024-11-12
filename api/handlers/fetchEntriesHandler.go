@@ -72,4 +72,6 @@ func FetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "<p>DEBUG: openDB.go</p>")
 	fmt.Fprintf(w, "%s, %s, %s\n", dbCfg.DisplayName, dbCfg.Host, dbCfg.Port)
 	fmt.Printf("%s, %s, %s\n", dbCfg.DisplayName, dbCfg.Host, dbCfg.Port)
+	dbCfg.SetDSN()
+	fmt.Fprintf(w, "<p>DSN: %s</p>", dbCfg.Dsn)
 }
