@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"api/dbops"
 	"fmt"
 	"net/http"
 	"time"
@@ -57,9 +58,17 @@ func FetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
 	fep.buildFetchEntriesSQLString()
 
 	// DEBUG print
-	fmt.Fprintln(w, "start_date:", fep.startDate)
-	fmt.Fprintln(w, "end_date:", fep.endDate)
-	fmt.Fprintf(w, "\n")
-	fmt.Fprintln(w, "prepared query:", fep.preparedQuery)
+	fmt.Fprintf(w, "<p>start_date: %s</p>", fep.startDate)
+	fmt.Fprintf(w, "<p>end_date: %s</p>", fep.endDate)
+	fmt.Fprintf(w, "<p>prepared query: %s</p>", fep.preparedQuery)
 	// end of DEBUG
+
+	dbc, err := dbops.NewDBConfig("config/db-config.json", fep.sourceNameParam)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprintln(w, "DEBUG: openDB.go")
+	fmt.Fprintf(w, "%s, %s, %s\n", dbc.DisplayName, dbc.Host, dbc.Port)
 }
