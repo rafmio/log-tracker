@@ -31,17 +31,12 @@ type DBConfig struct {
 	User             string `json:"User"`        // username "raf", "postgres", etc
 	Password         string `json:"Password"`    // password
 	SslMode          string `json:"SslMode"`     // SSL mode, etc "disable", "require", "verify-full", etc"
-	DSN              string // data source name
+	Dsn              string // data source name
 	DB               *sql.DB
 	Err              error
 }
 
-// Setting the path from where we will read the configuration file to connect to the database
-func (d *DBConfig) SetDBconfigFilePath() {
-	d.DbConfigFilePath = "config/db-config.json"
-}
-
-func (d *DBConfig) ReadConfig() error {
+func NewDBConfig(dbConfigFilePath string) (*DBConfig, error) {
 
 	// check if dbConfigFilePath is empty
 	if d.DbConfigFilePath == "" {
@@ -57,14 +52,17 @@ func (d *DBConfig) ReadConfig() error {
 	}
 
 	// unmarshalling JSON data to struct
-	d.dbConfigs = make(map[string]DBConfig) // variable for storing unmarshalled data
+	dbConfigs = make(map[string]DBConfig) // variable for storing unmarshalled data
 	err = json.Unmarshal(file, &d.dbConfigs)
 	if err != nil {
 		log.Println("Unmarshalling JSON:", err)
 		return err
 	}
 
-	return nil
+	dbCfg := new(DBConfig)
+	dbCfg = &dbConfigs[d.Name]
+
+	return dbCfg, nil
 }
 
 func (dbC *DBConnections) setDSNs() {
