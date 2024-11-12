@@ -63,12 +63,13 @@ func FetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "<p>prepared query: %s</p>", fep.preparedQuery)
 	// end of DEBUG
 
-	dbc, err := dbops.NewDBConfig("config/db-config.json", fep.sourceNameParam)
+	dbCfg, err := dbops.NewDBConfig("config/db-config.json", fep.dbName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	fmt.Fprintln(w, "DEBUG: openDB.go")
-	fmt.Fprintf(w, "%s, %s, %s\n", dbc.DisplayName, dbc.Host, dbc.Port)
+	fmt.Fprintln(w, "<p>DEBUG: openDB.go</p>")
+	fmt.Fprintf(w, "%s, %s, %s\n", dbCfg.DisplayName, dbCfg.Host, dbCfg.Port)
+	fmt.Printf("%s, %s, %s\n", dbCfg.DisplayName, dbCfg.Host, dbCfg.Port)
 }

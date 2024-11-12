@@ -16,13 +16,13 @@ var (
 type fetchEntriesParams struct {
 	w                   http.ResponseWriter
 	r                   *http.Request
-	sourceNameParam     string
-	startDateParam      string
-	endDateParam        string
-	layoutDateTime      string
-	startDate           time.Time
-	endDate             time.Time
-	rawQueryStr         string
+	sourceNameParam     string    // key (key=value, e.g.: source_name=cute_ganymede)
+	startDateParam      string    // key (key=value, e.g.: start_date=2022-01-01)
+	endDateParam        string    // key (key=value, e.g.: end_date=2022-01-31)
+	layoutDateTime      string    // e.g. "2006-01-02T15:04"
+	startDate           time.Time // formatted start date
+	endDate             time.Time // formatted end date
+	rawQueryStr         string    // raw query string for make a SQL query
 	dbName              string
 	tableName           string
 	timeStampColumnName string
@@ -54,18 +54,20 @@ func processURL(w http.ResponseWriter, r *http.Request) error {
 }
 
 func newFetchEntriesParams(w http.ResponseWriter, r *http.Request) *fetchEntriesParams {
-	fep := new(fetchEntriesParams)
+	fep := new(fetchEntriesParams) // creating new fetchEntriesParams instance
 	fep.w = w
 	fep.r = r
-	fep.sourceNameParam = "source_name"
-	fep.startDateParam = "start_date"
-	fep.endDateParam = "end_date"
-	fep.layoutDateTime = "2006-01-02T15:04"
-	// fep.rawQueryStr = `SELECT * FROM %s WHERE %s >= $1 AND %s <= $2`
-	fep.rawQueryStr = `SELECT * FROM %s WHERE %s BETWEEN %s AND %s`
-	fep.dbName = r.FormValue(fep.sourceNameParam)
-	fep.tableName = "lg_tab"
-	fep.timeStampColumnName = "tmstmp"
+
+	// set default values
+	fep.sourceNameParam = "source_name"     // default source name parameter (server's name)
+	fep.startDateParam = "start_date"       // default start date and time parameter
+	fep.endDateParam = "end_date"           // default end date and time parameter
+	fep.layoutDateTime = "2006-01-02T15:04" // default layout for date and time
+
+	fep.rawQueryStr = `SELECT * FROM %s WHERE %s BETWEEN %s AND %s` // building query string for SQL query
+	fep.dbName = r.FormValue(fep.sourceNameParam)                   // getting source name URL parameters
+	fep.tableName = "lg_tab"                                        // default table name in the database
+	fep.timeStampColumnName = "tmstmp"                              // default timestamp column name in the table
 
 	return fep
 }
