@@ -70,3 +70,20 @@ func (dbc *DBConfig) SetDSN() {
 		dbc.SslMode,
 	)
 }
+
+func (dbc *DBConfig) Connect() error {
+	var err error
+	dbc.DB, err = sql.Open(dbc.DriverName, dbc.Dsn)
+	if err != nil {
+		log.Println("Open database:", err)
+		dbc.Err = err
+		return err
+	}
+
+	err = dbc.DB.Ping()
+	if err != nil {
+		log.Println("Ping database:", err)
+		dbc.Err = err
+	}
+	return nil
+}

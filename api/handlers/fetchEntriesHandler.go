@@ -74,4 +74,21 @@ func FetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("%s, %s, %s\n", dbCfg.DisplayName, dbCfg.Host, dbCfg.Port)
 	dbCfg.SetDSN()
 	fmt.Fprintf(w, "<p>DSN: %s</p>", dbCfg.Dsn)
+
+	// opening database connection
+	err = dbCfg.Connect()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer dbCfg.DB.Close()
+
+	rows, err := dbCfg.DB.Query(fep.preparedQuery)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	// iterate over rows and populate LogEntry structs
 }
