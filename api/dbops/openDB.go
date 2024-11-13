@@ -31,7 +31,7 @@ func NewDBConfig(dbConfigFilePath, srcName string) (*DBConfig, error) {
 	// check if dbConfigFilePath is empty
 	if dbConfigFilePath == "" {
 		log.Println("Database config file path is empty")
-		return nil, fmt.Errorf("Database config file path is empty")
+		return nil, fmt.Errorf("database config file path is empty")
 	}
 
 	// reading file with configuration for DB connection
@@ -49,8 +49,7 @@ func NewDBConfig(dbConfigFilePath, srcName string) (*DBConfig, error) {
 		return nil, err
 	}
 
-	dbCfg := new(DBConfig) // new DBConfig instance
-	// dbCfg = &dbConfigs[srcName] // assigning data from map to struct for given source name
+	dbCfg := new(DBConfig)       // new DBConfig instance
 	tmpCfg := dbConfigs[srcName] // assigning data from map to struct for given source name
 	*dbCfg = tmpCfg              // assigning data from map to struct for given source name
 	dbCfg.Name = srcName

@@ -20,7 +20,7 @@ type LogEntry struct {
 }
 
 /*
-fetchEntriesHandler() handles incoming HTTP requests.
+FetchEntriesHandler() handles incoming HTTP requests.
 
 The format of the received request (example):
 https://194.58.102.129:8082/logtracker/fetch_entries?source_name=cute_ganymede&start_date=2024-08-21T14:35&end_date=2024-08-22T11:50
@@ -31,17 +31,17 @@ parameter names:
 - end_date: End date and time (ISO 8601) of the data to fetch
 */
 func FetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
-	// preProcessResponse make:
+	// processURL makes:
 	// 	1. checking whether the HTTP request method is a GET method
 	// 	2. setting headers
 	// 	3. parsing request's parameters and populate r.Form
 	err := processURL(w, r)
 	if err != nil {
 		if err == http.ErrNotSupported {
-			http.Error(w, "Only GET requests are supported", http.StatusMethodNotAllowed)
+			http.Error(w, "only GET requests are supported", http.StatusMethodNotAllowed)
 		}
 		if err == ErrParsingForm {
-			http.Error(w, "Error parsing form", http.StatusBadRequest)
+			http.Error(w, "error parsing form", http.StatusBadRequest)
 		}
 	}
 
@@ -57,12 +57,6 @@ func FetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
 	// build SQL query
 	fep.buildFetchEntriesSQLString()
 
-	// DEBUG print
-	fmt.Fprintf(w, "<p>start_date: %s</p>", fep.startDate)
-	fmt.Fprintf(w, "<p>end_date: %s</p>", fep.endDate)
-	fmt.Fprintf(w, "<p>prepared query: %s</p>", fep.preparedQuery)
-	// end of DEBUG
-
 	dbCfg, err := dbops.NewDBConfig("config/db-config.json", fep.dbName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -70,7 +64,7 @@ func FetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dbCfg.SetDSN()
-	fmt.Fprintf(w, "<p>DSN: %s</p>", dbCfg.Dsn)
+	fmt.Fprintf(w, "<p>DSN: %s</p>", dbCfg.Dsn) // DEBUG print
 
 	// opening database connection
 	err = dbCfg.EstablishDbConnection()
