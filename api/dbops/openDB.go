@@ -71,7 +71,7 @@ func (dbc *DBConfig) SetDSN() {
 	)
 }
 
-func (dbc *DBConfig) Connect() error {
+func (dbc *DBConfig) EstablishDbConnection() error {
 	var err error
 	dbc.DB, err = sql.Open(dbc.DriverName, dbc.Dsn)
 	if err != nil {

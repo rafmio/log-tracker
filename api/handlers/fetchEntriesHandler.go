@@ -45,7 +45,7 @@ func FetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// new instance
+	// new instance of the fetchEntriesParams struct
 	fep := newFetchEntriesParams(w, r)
 
 	err = fep.parseAndValidateDateRange()
@@ -69,14 +69,11 @@ func FetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintln(w, "<p>DEBUG: openDB.go</p>")
-	fmt.Fprintf(w, "%s, %s, %s\n", dbCfg.DisplayName, dbCfg.Host, dbCfg.Port)
-	fmt.Printf("%s, %s, %s\n", dbCfg.DisplayName, dbCfg.Host, dbCfg.Port)
 	dbCfg.SetDSN()
 	fmt.Fprintf(w, "<p>DSN: %s</p>", dbCfg.Dsn)
 
 	// opening database connection
-	err = dbCfg.Connect()
+	err = dbCfg.EstablishDbConnection()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -90,5 +87,4 @@ func FetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	// iterate over rows and populate LogEntry structs
 }

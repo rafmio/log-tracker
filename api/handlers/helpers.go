@@ -8,9 +8,9 @@ import (
 )
 
 var (
-	ErrParsingForm        = errors.New("Error parsing form")
-	ErrIncorrectSetDate   = errors.New("Invalid start or end date")
-	ErrIncorrectDateRange = errors.New("Interval is more than 48 hours")
+	ErrParsingForm        = errors.New("error parsing form")
+	ErrIncorrectSetDate   = errors.New("invalid start or end date")
+	ErrIncorrectDateRange = errors.New("interval is more than 48 hours")
 )
 
 type fetchEntriesParams struct {
@@ -64,10 +64,10 @@ func newFetchEntriesParams(w http.ResponseWriter, r *http.Request) *fetchEntries
 	fep.endDateParam = "end_date"           // default end date and time parameter
 	fep.layoutDateTime = "2006-01-02T15:04" // default layout for date and time
 
-	fep.rawQueryStr = `SELECT * FROM %s WHERE %s BETWEEN %s AND %s` // building query string for SQL query
-	fep.dbName = r.FormValue(fep.sourceNameParam)                   // getting source name URL parameters
-	fep.tableName = "lg_tab"                                        // default table name in the database
-	fep.timeStampColumnName = "tmstmp"                              // default timestamp column name in the table
+	fep.rawQueryStr = `SELECT * FROM %s WHERE %s BETWEEN '%s' AND '%s'` // building query string for SQL query
+	fep.dbName = r.FormValue(fep.sourceNameParam)                       // getting source name URL parameters
+	fep.tableName = "lg_tab"                                            // default table name in the database
+	fep.timeStampColumnName = "tmstmp"                                  // default timestamp column name in the table
 
 	return fep
 }
@@ -99,7 +99,9 @@ func (f *fetchEntriesParams) buildFetchEntriesSQLString() {
 		f.rawQueryStr,
 		f.tableName,
 		f.timeStampColumnName,
-		f.startDate.String(),
-		f.endDate.String(),
+		// f.startDate.String(),
+		// f.endDate.String(),
+		f.startDate.Format(f.layoutDateTime),
+		f.endDate.Format(f.layoutDateTime),
 	)
 }
