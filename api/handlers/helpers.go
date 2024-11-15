@@ -14,7 +14,7 @@ var (
 )
 
 type fetchEntriesParams struct {
-	w                   http.ResponseWriter
+	// w                   http.ResponseWriter
 	r                   *http.Request
 	sourceNameParam     string    // key (key=value, e.g.: source_name=cute_ganymede)
 	startDateParam      string    // key (key=value, e.g.: start_date=2022-01-01)
@@ -55,7 +55,7 @@ func processURL(w http.ResponseWriter, r *http.Request) error {
 
 func newFetchEntriesParams(w http.ResponseWriter, r *http.Request) *fetchEntriesParams {
 	fep := new(fetchEntriesParams) // creating new fetchEntriesParams instance
-	fep.w = w
+	// fep.w = w
 	fep.r = r
 
 	// set default values
@@ -99,8 +99,6 @@ func (f *fetchEntriesParams) buildFetchEntriesSQLString() {
 		f.rawQueryStr,
 		f.tableName,
 		f.timeStampColumnName,
-		// f.startDate.String(),
-		// f.endDate.String(),
 		f.startDate.Format(f.layoutDateTime),
 		f.endDate.Format(f.layoutDateTime),
 	)
