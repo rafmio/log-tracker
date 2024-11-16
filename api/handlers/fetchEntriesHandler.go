@@ -57,7 +57,9 @@ func FetchEntriesHandler(w http.ResponseWriter, r *http.Request) {
 	// build SQL query
 	fep.buildFetchEntriesSQLString()
 
-	dbCfg, err := dbops.NewDBConfig("config/db-config.json", fep.dbName)
+	dbConfigFilePath := "config/db-config.json"
+
+	dbCfg, err := dbops.NewDBConfig(dbConfigFilePath, fep.dbName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
