@@ -4,6 +4,7 @@ import (
 	"api/dbops"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -19,8 +20,8 @@ type totalStatsParams struct {
 type serverStat struct {
 	serverName string // server name: 'cute_ganymede', 'black_oxygenium', etc
 	totalStatsParams
-	dbops.DBConfig
-	err error
+	dbCfg *dbops.DBConfig
+	err   error
 }
 
 func TotalStatsHandler(w http.ResponseWriter, r *http.Request) {
@@ -40,31 +41,39 @@ func TotalStatsHandler(w http.ResponseWriter, r *http.Request) {
 
 	dbConfigFilePath := "config/db-config.json"
 
-	var serverStatList []*serverStat
-
-	// filling serverStatList
-	err = newServerStatList(dbConfigFilePath, serverStatList)
+	// new serverStatList []*serverStat
+	serverStatList, err := newServerStatList(dbConfigFilePath)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+
+	// DEBUG printing
+	fmt.Fprintf(w, "len serverStatList: %d\n", len(serverStatList))
 
 	// filling totalStatsParams
 	// filling database configs
 	for _, srv := range serverStatList {
 		srv.totalStatsParams = *newTotalStatsParams()
-		srv.DBConfig, err := dbops.NewDBConfig(dbConfigFilePath, srv.serverName)
+		srv.dbCfg, err = dbops.NewDBConfig(dbConfigFilePath, srv.serverName)
 		if err != nil {
 			srv.err = err
 		}
 	}
+
+	for _, srv := range serverStatList {
+		fmt.Fprintf(w, "Server: %s\n", srv.serverName)
+		fmt.Fprintf(w, "DSN: %s\n", srv.dbCfg.Dsn)
+	}
 }
 
-func newServerStatList(dbConfigFilePath string, serverStatList []*serverStat) error {
+func newServerStatList(dbConfigFilePath string) ([]*serverStat, error) {
 	// open config file
+	serverStatList := make([]*serverStat, 0)
+
 	file, err := os.ReadFile(dbConfigFilePath)
 	if err != nil {
 		log.Println("opening config file:", err)
-		return err
+		return nil, err
 	}
 
 	// unmarshalling JSON data to struct
@@ -72,7 +81,7 @@ func newServerStatList(dbConfigFilePath string, serverStatList []*serverStat) er
 	err = json.Unmarshal(file, &dbConfigs)
 	if err != nil {
 		log.Println("Unmarshalling JSON:", err)
-		return err
+		return nil, err
 	}
 
 	for srvName := range dbConfigs { // see 'Simplify range: https://pkg.go.dev/golang.org/x/tools/gopls/internal/analysis/simplifyrange'
@@ -81,11 +90,12 @@ func newServerStatList(dbConfigFilePath string, serverStatList []*serverStat) er
 		} else {
 			newServerStat := new(serverStat)
 			newServerStat.serverName = srvName
+			// append newServerStat to serverStatList
 			serverStatList = append(serverStatList, newServerStat)
 		}
 	}
 
-	return nil
+	return serverStatList, nil
 }
 
 func newTotalStatsParams() *totalStatsParams {
