@@ -20,8 +20,8 @@ type totalStatsParams struct {
 type serverStat struct {
 	serverName string // server name: 'cute_ganymede', 'black_oxygenium', etc
 	totalStatsParams
-	dbCfg *dbops.DBConfig
-	err   error
+	*dbops.DBConfig
+	err error
 }
 
 func TotalStatsHandler(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +54,7 @@ func TotalStatsHandler(w http.ResponseWriter, r *http.Request) {
 	// filling database configs
 	for _, srv := range serverStatList {
 		srv.totalStatsParams = *newTotalStatsParams()
-		srv.dbCfg, err = dbops.NewDBConfig(dbConfigFilePath, srv.serverName)
+		srv.DBConfig, err = dbops.NewDBConfig(dbConfigFilePath, srv.serverName)
 		if err != nil {
 			srv.err = err
 		}
@@ -62,7 +62,8 @@ func TotalStatsHandler(w http.ResponseWriter, r *http.Request) {
 
 	for _, srv := range serverStatList {
 		fmt.Fprintf(w, "Server: %s\n", srv.serverName)
-		fmt.Fprintf(w, "DSN: %s\n", srv.dbCfg.Dsn)
+		fmt.Fprintf(w, "DSN: %s\n", srv.DBConfig.Dsn)
+		// fmt.Fprintf(w, "Indicator queries: %v\n", srv.totalStatsParams.statIndicatorsQueries)
 	}
 }
 
