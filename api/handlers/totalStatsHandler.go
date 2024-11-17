@@ -124,7 +124,7 @@ func newTotalStatsParams() *totalStatsParams {
 	tsp.statIndicatorsNames = make(map[string]string)
 	tsp.statIndicatorsQueries = make(map[string]string)
 
-	// add your custom statistics here
+	// map of stat indicator names
 	tsp.statIndicatorsNames["total_records"] = "Total Number of Records"
 	tsp.statIndicatorsNames["unique_ip_count"] = "Unique IP Count"
 	tsp.statIndicatorsNames["records_per_day"] = "Records Per Day"
