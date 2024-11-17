@@ -50,20 +50,40 @@ func TotalStatsHandler(w http.ResponseWriter, r *http.Request) {
 	// DEBUG printing
 	fmt.Fprintf(w, "len serverStatList: %d\n", len(serverStatList))
 
-	// filling totalStatsParams
-	// filling database configs
 	for _, srv := range serverStatList {
-		srv.totalStatsParams = *newTotalStatsParams()
+		srv.totalStatsParams = *newTotalStatsParams() // filling totalStatsParams
+
+		// set DB configs
 		srv.DBConfig, err = dbops.NewDBConfig(dbConfigFilePath, srv.serverName)
 		if err != nil {
 			srv.err = err
 		}
+		srv.DBConfig.SetDSN()
+		err = srv.DBConfig.EstablishDbConnection()
+		if err != nil {
+			http.Error(w, "Error: establishing connection to DB", http.StatusInternalServerError)
+		}
+		defer srv.DB.Close()
+
+		for qrNm, sqlQr := range srv.statIndicatorsQueries {
+			resultOfSqlQr, err := srv.DB.Query(sqlQr)
+			if err != nil {
+				http.Error(w, "Error making SQL query", http.StatusInternalServerError)
+			}
+			srv.statIndicatorsRows[qrNm] = resultOfSqlQr
+		}
 	}
 
 	for _, srv := range serverStatList {
-		fmt.Fprintf(w, "Server: %s\n", srv.serverName)
-		fmt.Fprintf(w, "DSN: %s\n", srv.DBConfig.Dsn)
+		fmt.Fprintf(w, "<p>Server: %s\n", srv.serverName)
+		fmt.Fprintf(w, "Host: %s\n</p>", srv.Host)
+		fmt.Fprintf(w, "DSN: %s\n", srv.Dsn)
 		// fmt.Fprintf(w, "Indicator queries: %v\n", srv.totalStatsParams.statIndicatorsQueries)
+		for indName, rows := range srv.statIndicatorsRows {
+			for rows.Next() {
+
+			}
+		}
 	}
 }
 
