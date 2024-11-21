@@ -1,0 +1,88 @@
+Ошибка с рабочего компа: 
+
+
+2024/11/21 11:52:47 Ping database: pq: no pg_hba.conf entry for host "92.255.199.163", user "raf", database "logtracker", SSL off
+2024/11/21 11:52:49 http: panic serving [::1]:57596: runtime error: invalid memory address or nil pointer dereference
+goroutine 49 [running]:
+net/http.(*conn).serve.func1()
+	/usr/local/go/src/net/http/server.go:1947 +0xbe
+panic({0x7026a0?, 0x9d0c90?})
+	/usr/local/go/src/runtime/panic.go:785 +0x132
+api/handlers.debugPrint({0xc0001a39b0, 0x2, 0x75650b?}, {0x7e5840, 0xc0001f6460})
+	/home/raf/Projects/log-tracker/api/handlers/totalStatsHandler.go:89 +0x29f
+api/handlers.TotalStatsHandler({0x7e5840, 0xc0001f6460}, 0xc00005cb38?)
+	/home/raf/Projects/log-tracker/api/handlers/totalStatsHandler.go:80 +0x6b7
+net/http.HandlerFunc.ServeHTTP(0xc0000e60e0?, {0x7e5840?, 0xc0001f6460?}, 0x6af596?)
+	/usr/local/go/src/net/http/server.go:2220 +0x29
+net/http.(*ServeMux).ServeHTTP(0x466c59?, {0x7e5840, 0xc0001f6460}, 0xc0001aa640)
+	/usr/local/go/src/net/http/server.go:2747 +0x1ca
+net/http.serverHandler.ServeHTTP({0xc0002a7c80?}, {0x7e5840?, 0xc0001f6460?}, 0x6?)
+	/usr/local/go/src/net/http/server.go:3210 +0x8e
+net/http.(*conn).serve(0xc0002ce870, {0x7e5f30, 0xc0000a5170})
+	/usr/local/go/src/net/http/server.go:2092 +0x5d0
+created by net/http.(*Server).Serve in goroutine 1
+	/usr/local/go/src/net/http/server.go:3360 +0x485
+2024/11/21 11:52:51 Ping database: pq: no pg_hba.conf entry for host "92.255.199.163", user "raf", database "logtracker", SSL off
+2024/11/21 11:52:54 http: panic serving [::1]:57606: runtime error: invalid memory address or nil pointer dereference
+goroutine 66 [running]:
+net/http.(*conn).serve.func1()
+	/usr/local/go/src/net/http/server.go:1947 +0xbe
+panic({0x7026a0?, 0x9d0c90?})
+	/usr/local/go/src/runtime/panic.go:785 +0x132
+api/handlers.debugPrint({0xc0000b1080, 0x2, 0x75650b?}, {0x7e5840, 0xc0000e6460})
+	/home/raf/Projects/log-tracker/api/handlers/totalStatsHandler.go:89 +0x29f
+api/handlers.TotalStatsHandler({0x7e5840, 0xc0000e6460}, 0xc00019ab38?)
+	/home/raf/Projects/log-tracker/api/handlers/totalStatsHandler.go:80 +0x6b7
+net/http.HandlerFunc.ServeHTTP(0xc0000e60e0?, {0x7e5840?, 0xc0000e6460?}, 0x6af596?)
+	/usr/local/go/src/net/http/server.go:2220 +0x29
+net/http.(*ServeMux).ServeHTTP(0x466c59?, {0x7e5840, 0xc0000e6460}, 0xc0001aa500)
+	/usr/local/go/src/net/http/server.go:2747 +0x1ca
+net/http.serverHandler.ServeHTTP({0xc0002a7c20?}, {0x7e5840?, 0xc0000e6460?}, 0x6?)
+	/usr/local/go/src/net/http/server.go:3210 +0x8e
+net/http.(*conn).serve(0xc0002ce900, {0x7e5f30, 0xc0000a5170})
+	/usr/local/go/src/net/http/server.go:2092 +0x5d0
+created by net/http.(*Server).Serve in goroutine 1
+	/usr/local/go/src/net/http/server.go:3360 +0x485
+2024/11/21 11:52:54 Ping database: pq: no pg_hba.conf entry for host "92.255.199.163", user "raf", database "logtracker", SSL off
+2024/11/21 11:52:57 http: panic serving [::1]:57612: runtime error: invalid memory address or nil pointer dereference
+goroutine 31 [running]:
+net/http.(*conn).serve.func1()
+	/usr/local/go/src/net/http/server.go:1947 +0xbe
+panic({0x7026a0?, 0x9d0c90?})
+	/usr/local/go/src/runtime/panic.go:785 +0x132
+api/handlers.debugPrint({0xc0000b1750, 0x2, 0x75650b?}, {0x7e5840, 0xc0000e6620})
+	/home/raf/Projects/log-tracker/api/handlers/totalStatsHandler.go:89 +0x29f
+api/handlers.TotalStatsHandler({0x7e5840, 0xc0000e6620}, 0xc00019ab38?)
+	/home/raf/Projects/log-tracker/api/handlers/totalStatsHandler.go:80 +0x6b7
+net/http.HandlerFunc.ServeHTTP(0xc0000e60e0?, {0x7e5840?, 0xc0000e6620?}, 0x6af596?)
+	/usr/local/go/src/net/http/server.go:2220 +0x29
+net/http.(*ServeMux).ServeHTTP(0x466c59?, {0x7e5840, 0xc0000e6620}, 0xc0000f2640)
+	/usr/local/go/src/net/http/server.go:2747 +0x1ca
+net/http.serverHandler.ServeHTTP({0xc000147410?}, {0x7e5840?, 0xc0000e6620?}, 0x6?)
+	/usr/local/go/src/net/http/server.go:3210 +0x8e
+net/http.(*conn).serve(0xc000113830, {0x7e5f30, 0xc0000a5170})
+	/usr/local/go/src/net/http/server.go:2092 +0x5d0
+created by net/http.(*Server).Serve in goroutine 1
+	/usr/local/go/src/net/http/server.go:3360 +0x485
+2024/11/21 11:52:57 Ping database: pq: no pg_hba.conf entry for host "92.255.199.163", user "raf", database "logtracker", SSL off
+2024/11/21 11:53:00 http: panic serving [::1]:49414: runtime error: invalid memory address or nil pointer dereference
+goroutine 69 [running]:
+net/http.(*conn).serve.func1()
+	/usr/local/go/src/net/http/server.go:1947 +0xbe
+panic({0x7026a0?, 0x9d0c90?})
+	/usr/local/go/src/runtime/panic.go:785 +0x132
+api/handlers.debugPrint({0xc0001a3f50, 0x2, 0x75650b?}, {0x7e5840, 0xc0001f6620})
+	/home/raf/Projects/log-tracker/api/handlers/totalStatsHandler.go:89 +0x29f
+api/handlers.TotalStatsHandler({0x7e5840, 0xc0001f6620}, 0xc00005cb38?)
+	/home/raf/Projects/log-tracker/api/handlers/totalStatsHandler.go:80 +0x6b7
+net/http.HandlerFunc.ServeHTTP(0xc0000e60e0?, {0x7e5840?, 0xc0001f6620?}, 0x6af596?)
+	/usr/local/go/src/net/http/server.go:2220 +0x29
+net/http.(*ServeMux).ServeHTTP(0x466c59?, {0x7e5840, 0xc0001f6620}, 0xc0001aa780)
+	/usr/local/go/src/net/http/server.go:2747 +0x1ca
+net/http.serverHandler.ServeHTTP({0xc000394960?}, {0x7e5840?, 0xc0001f6620?}, 0x6?)
+	/usr/local/go/src/net/http/server.go:3210 +0x8e
+net/http.(*conn).serve(0xc0002cf170, {0x7e5f30, 0xc0000a5170})
+	/usr/local/go/src/net/http/server.go:2092 +0x5d0
+created by net/http.(*Server).Serve in goroutine 1
+	/usr/local/go/src/net/http/server.go:3360 +0x485
+

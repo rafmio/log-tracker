@@ -2,8 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
-	"net/http"
 )
 
 type totalStatsResult struct {
@@ -77,18 +75,18 @@ func extractStatIndicators(statIndicatorsRows map[string]*sql.Rows) (*totalStats
 
 // matchIpAndCountry matches IP addresses with their corresponding countries
 // makes GET requests to a geolocation API
-func matchIpAndCountry(tsr map[string]string) (map[string]string, error) {
-	countries := make(map[string]string)
-	// Make API requests to geolocation API here
-	for ip := range tsr {
-		resp, err := http.Get(fmt.Sprintf("http://ipwho.is/%s", ip))
-		if err != nil {
-			return nil, err
-		}
+// func matchIpAndCountry(tsr map[string]string) (map[string]string, error) {
+// 	countries := make(map[string]string)
+// 	// Make API requests to geolocation API here
+// 	for ip := range tsr {
+// 		resp, err := http.Get(fmt.Sprintf("http://ipwho.is/%s", ip))
+// 		if err != nil {
+// 			return nil, err
+// 		}
 
-		defer resp.Body.Close()
+// 		defer resp.Body.Close()
 
-		// Parse and extract country from API response
-		//
-	}
-}
+// 		// Parse and extract country from API response
+// 		//
+// 	}
+// }
