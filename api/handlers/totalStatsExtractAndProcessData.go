@@ -2,15 +2,17 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
+	"net/http"
 )
 
 type totalStatsResult struct {
-	totalRecords   int               `json:"total_records"`
-	uniqueIPCount  int               `json:"unique_ip_count"`
-	recordsPerDay  float64           `json:"records_per_day"`
-	topTenIPs      map[string]int    `json:"top_10_ips"`
-	topTenDpt      map[string]int    `json:"top_10_dpt"`
-	mapIpCountries map[string]string // map[ip_string]"Country Name"
+	TotalRecords   int               `json:"total_records"`
+	UniqueIPCount  int               `json:"unique_ip_count"`
+	RecordsPerDay  float64           `json:"records_per_day"`
+	TopTenIPs      map[string]int    `json:"top_10_ips"`
+	TopTenDpt      map[string]int    `json:"top_10_dpt"`
+	MapIpCountries map[string]string `json:"map_ip_countries"`
 }
 
 func extractStatIndicators(statIndicatorsRows map[string]*sql.Rows) (*totalStatsResult, error) {
@@ -23,7 +25,7 @@ func extractStatIndicators(statIndicatorsRows map[string]*sql.Rows) (*totalStats
 				return tsr, err
 			}
 		}
-		tsr.totalRecords = count
+		tsr.TotalRecords = count
 	}
 
 	if rows, ok := statIndicatorsRows["unique_ip_count"]; ok {
@@ -33,7 +35,7 @@ func extractStatIndicators(statIndicatorsRows map[string]*sql.Rows) (*totalStats
 				return tsr, err
 			}
 		}
-		tsr.uniqueIPCount = uniqCount
+		tsr.UniqueIPCount = uniqCount
 	}
 
 	if rows, ok := statIndicatorsRows["records_per_day"]; ok {
@@ -43,30 +45,30 @@ func extractStatIndicators(statIndicatorsRows map[string]*sql.Rows) (*totalStats
 				return tsr, err
 			}
 		}
-		tsr.recordsPerDay = avg
+		tsr.RecordsPerDay = avg
 	}
 
 	if rows, ok := statIndicatorsRows["top_10_ips"]; ok {
-		tsr.topTenIPs = make(map[string]int)
+		tsr.TopTenIPs = make(map[string]int)
 		for rows.Next() {
 			var ip string
 			var count int
 			if err := rows.Scan(&ip, &count); err != nil {
 				return tsr, err
 			}
-			tsr.topTenIPs[ip] = count
+			tsr.TopTenIPs[ip] = count
 		}
 	}
 
 	if rows, ok := statIndicatorsRows["top_10_dpt"]; ok {
-		tsr.topTenDpt = make(map[string]int)
+		tsr.TopTenDpt = make(map[string]int)
 		for rows.Next() {
 			var dpt string
 			var count int
 			if err := rows.Scan(&dpt, &count); err != nil {
 				return tsr, err
 			}
-			tsr.topTenDpt[dpt] = count
+			tsr.TopTenDpt[dpt] = count
 		}
 	}
 
@@ -75,18 +77,19 @@ func extractStatIndicators(statIndicatorsRows map[string]*sql.Rows) (*totalStats
 
 // matchIpAndCountry matches IP addresses with their corresponding countries
 // makes GET requests to a geolocation API
-// func matchIpAndCountry(tsr map[string]string) (map[string]string, error) {
-// 	countries := make(map[string]string)
-// 	// Make API requests to geolocation API here
-// 	for ip := range tsr {
-// 		resp, err := http.Get(fmt.Sprintf("http://ipwho.is/%s", ip))
-// 		if err != nil {
-// 			return nil, err
-// 		}
+func (t *totalStatsResult) fillIpAndCountryMap() error {
+	t.MapIpCountries = make(map[string]string)
 
-// 		defer resp.Body.Close()
+	// Make API requests to geolocation API here
+	for ip := range tsr {
+		resp, err := http.Get(fmt.Sprintf("http://ipwho.is/%s", ip))
+		if err != nil {
+			return nil, err
+		}
 
-// 		// Parse and extract country from API response
-// 		//
-// 	}
-// }
+		defer resp.Body.Close()
+
+		// Parse and extract country from API response
+		//
+	}
+}
