@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -75,21 +76,41 @@ func extractStatIndicators(statIndicatorsRows map[string]*sql.Rows) (*totalStats
 	return tsr, nil
 }
 
-// matchIpAndCountry matches IP addresses with their corresponding countries
+// fillIpAndCountryMap() matches IP addresses with their corresponding countries
 // makes GET requests to a geolocation API
 func (t *totalStatsResult) fillIpAndCountryMap() error {
 	t.MapIpCountries = make(map[string]string)
 
+	// data structure for parsing geolocation API response
+	type Response struct {
+		IP      string `json:"ip"`
+		Success bool   `json:"success"`
+		Country string `json:"country"`
+	}
+
 	// Make API requests to geolocation API here
-	for ip := range tsr {
+	for ip := range t.TopTenIPs {
 		resp, err := http.Get(fmt.Sprintf("http://ipwho.is/%s", ip))
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		defer resp.Body.Close()
 
 		// Parse and extract country from API response
-		//
+		var response Response
+		if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+			fmt.Println("Error decoding IP information: ", err)
+			return err
+		}
+
+		if !response.Success {
+			fmt.Println("Error retrieving IP information for", ip)
+		}
+
+		t.MapIpCountries[ip] = response.Country
+		// fmt.Println(ip, ":", response.Country)
 	}
+
+	return nil
 }
