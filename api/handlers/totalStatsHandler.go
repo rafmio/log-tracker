@@ -3,11 +3,9 @@ package handlers
 import (
 	"fmt"
 	"net/http"
-	"time"
 )
 
 func TotalStatsHandler(w http.ResponseWriter, r *http.Request) {
-	start := time.Now() //
 	// processURL makes:
 	// 	1. checking whether the HTTP request method is a GET method
 	// 	2. setting headers
@@ -21,27 +19,19 @@ func TotalStatsHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "error parsing form", http.StatusBadRequest)
 		}
 	}
-	elapsed := time.Since(start)
-	fmt.Println("after processURL:", elapsed)
 
 	dbConfigFilePath := "config/db-config.json"
 
 	// initialize serverStatList []*serverStats
-	serverStatList, err := newServerStatsList(dbConfigFilePath)
+	serverNames, err := getServerNames(dbConfigFilePath)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	elapsed = time.Since(start)
-	fmt.Println("after newServerStatList:", elapsed)
-
 	// 1. initialize SQL queries
 	// 2. establish DB connection
 	// 3. make queries
-	for _, srv := range serverStatList {
-
-		elapsed = time.Since(start)
-		fmt.Println("inside 'for':", elapsed)
+	for _, srv := range serverNames {
 
 		srv.initializeSQLqueries()                         // initialize SQL queries
 		err := srv.setConfigAndConnectDB(dbConfigFilePath) // establish DB connection
@@ -52,18 +42,12 @@ func TotalStatsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		defer srv.DB.Close()
 
-		elapsed = time.Since(start)
-		fmt.Println("after initialize  SQL queries and set DB config:", elapsed)
-
 		err = srv.makeQueries() // make queries and populate srv.statIndicatorsRows
 		if err != nil {
 			http.Error(w, "Error making queries", http.StatusInternalServerError)
 			srv.err = err
 			continue
 		}
-
-		elapsed = time.Since(start)
-		fmt.Println("after make query", elapsed)
 
 		srv.readyStatIndicators, err = extractStatIndicators(srv.statIndicatorsRows)
 		if err != nil {
@@ -72,9 +56,6 @@ func TotalStatsHandler(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		elapsed = time.Since(start)
-		fmt.Println("after extract", elapsed)
-
 		err = srv.readyStatIndicators.fillIpAndCountryMap()
 		if err != nil {
 			http.Error(w, "Error filling IP and Country map", http.StatusInternalServerError)
@@ -82,8 +63,6 @@ func TotalStatsHandler(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		elapsed = time.Since(start)
-		fmt.Println("after fill country", elapsed)
 	}
 
 	// DEBUG print:

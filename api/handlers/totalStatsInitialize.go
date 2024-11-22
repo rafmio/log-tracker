@@ -20,10 +20,9 @@ type serverStats struct {
 	err                   error
 }
 
-// the []*serverStats is intended for group processing of SQL queries to different servers
-func newServerStatsList(dbConfigFilePath string) ([]*serverStats, error) {
+func getServerNames(dbConfigFilePath string) ([]string, error) {
 	// open config file
-	serverStatList := make([]*serverStats, 0)
+	serverNames := make([]string, 0)
 
 	file, err := os.ReadFile(dbConfigFilePath)
 	if err != nil {
@@ -46,13 +45,11 @@ func newServerStatsList(dbConfigFilePath string) ([]*serverStats, error) {
 		if strings.Contains(srvName, "test") {
 			continue // we no need "test" servers in production
 		} else {
-			newServerStat := new(serverStats)
-			newServerStat.serverName = srvName
-			serverStatList = append(serverStatList, newServerStat)
+			serverNames = append(serverNames, srvName)
 		}
 	}
 
-	return serverStatList, nil
+	return serverNames, nil
 }
 
 func (s *serverStats) initializeSQLqueries() {
