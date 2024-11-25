@@ -60,7 +60,13 @@ func TotalStatsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	debugPrint(serverStatList, w)
+	err = writeServerStatsJSON(serverStatList, w)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// debugPrint(serverStatList, w)
 }
 
 func processServerStats(srvNm, dbConfigFilePath string, resultChan chan<- *serverStats, errChan chan<- error, wg *sync.WaitGroup) {
@@ -111,25 +117,25 @@ func handleProcessURLError(w http.ResponseWriter, err error) {
 
 // The debugPrint function remains unchanged
 
-func debugPrint(serverStatsList []*serverStats, w http.ResponseWriter) {
-	fmt.Println("-------------------")
-	for _, srv := range serverStatsList {
-		fmt.Fprintf(w, "<h1>Server: %s ", srv.serverName)
-		// fmt.Fprintf(w, "Host: %s</h1>", srv.Host)
-		// fmt.Fprintf(w, "<p>DSN: %s</p>", srv.Dsn)
-		fmt.Fprintf(w, "<h3>Total Stats:</h3>")
-		fmt.Fprintf(w, "<p>Total records: %d</p>", srv.readyStatIndicators.TotalRecords)
-		fmt.Fprintf(w, "<p>Unique IP Count: %d</p>", srv.readyStatIndicators.UniqueIPCount)
-		fmt.Fprintf(w, "<p>Records per day: %.2f</p>", srv.readyStatIndicators.RecordsPerDay)
-		fmt.Fprintf(w, "<h4>Top 10 IPs:</h4>")
-		for ip, num := range srv.readyStatIndicators.TopTenIPs {
-			fmt.Fprintf(w, "<p>%s : %d [%s]</p>", ip, num, srv.readyStatIndicators.MapIpCountries[ip])
-		}
-		fmt.Fprintf(w, "<h4>Top 10 Department ports:</h4>")
-		for dpt, num := range srv.readyStatIndicators.TopTenDpt {
-			fmt.Fprintf(w, "<p>%s : %d</p>", dpt, num)
-		}
+// func debugPrint(serverStatsList []*serverStats, w http.ResponseWriter) {
+// 	fmt.Println("-------------------")
+// 	for _, srv := range serverStatsList {
+// 		fmt.Fprintf(w, "<h1>Server: %s ", srv.serverName)
+// 		// fmt.Fprintf(w, "Host: %s</h1>", srv.Host)
+// 		// fmt.Fprintf(w, "<p>DSN: %s</p>", srv.Dsn)
+// 		fmt.Fprintf(w, "<h3>Total Stats:</h3>")
+// 		fmt.Fprintf(w, "<p>Total records: %d</p>", srv.readyStatIndicators.TotalRecords)
+// 		fmt.Fprintf(w, "<p>Unique IP Count: %d</p>", srv.readyStatIndicators.UniqueIPCount)
+// 		fmt.Fprintf(w, "<p>Records per day: %.2f</p>", srv.readyStatIndicators.RecordsPerDay)
+// 		fmt.Fprintf(w, "<h4>Top 10 IPs:</h4>")
+// 		for ip, num := range srv.readyStatIndicators.TopTenIPs {
+// 			fmt.Fprintf(w, "<p>%s : %d [%s]</p>", ip, num, srv.readyStatIndicators.MapIpCountries[ip])
+// 		}
+// 		fmt.Fprintf(w, "<h4>Top 10 Department ports:</h4>")
+// 		for dpt, num := range srv.readyStatIndicators.TopTenDpt {
+// 			fmt.Fprintf(w, "<p>%s : %d</p>", dpt, num)
+// 		}
 
-	}
+// 	}
 
-}
+// }

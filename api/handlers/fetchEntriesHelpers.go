@@ -38,7 +38,8 @@ func processURL(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	// set headers
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	// w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")             // Allow all origins
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS") // methods 'PUT', 'PATCH' and 'DELETE' has been deleted
 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, hx-request, hx-target, hx-current-url")
