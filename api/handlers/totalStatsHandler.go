@@ -60,7 +60,7 @@ func TotalStatsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	err = writeServerStatsJSON(serverStatList, w)
+	err = writeServerStatsJSON(w, serverStatList)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

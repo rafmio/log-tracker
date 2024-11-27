@@ -34,7 +34,7 @@ func writeServerStatsJSON(w http.ResponseWriter, serverStatList []*serverStats) 
 	}
 
 	// Set the content type header
-	w.Header().Set("Content-Type", "application/json")
+	// w.Header().Set("Content-Type", "application/json")
 
 	// Encode the JSON and write it to the ResponseWriter
 	encoder := json.NewEncoder(w)
