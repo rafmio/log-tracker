@@ -1,0 +1,28 @@
+/my-web-app
+│
+├── /cmd
+│   └── /my-server
+│       └── main.go          # Entry point for the HTTP server
+│
+├── /internal
+│   └── /handlers
+│       └── handlers.go      # HTTP request handlers
+│
+├── /web
+│   ├── /static
+│   │   └── /css
+│   │       └── styles.css    # CSS files
+│   │
+│   └── /templates
+│       ├── index.html        # HTML files
+│       └── about.html        # Additional HTML files
+│
+├── /config
+│   └── config.yaml           # Configuration files (if needed)
+│
+├── /scripts
+│   └── setup.sh              # Scripts for setup or deployment
+│
+├── go.mod                    # Go module file
+└── README.md                 # Project documentation
+

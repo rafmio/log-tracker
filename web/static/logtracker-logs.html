@@ -1,0 +1,32 @@
+<!-- Date Selector -->
+<form hx-get="/logtracker/logs/fetch" hx-target="#logtracker-logs-table" hx-swap="innerHTML">
+
+    <fieldset>
+        <legend>Select Data Source:</legend>
+        <label>
+            <input type="radio" name="source_name" value="black_oxygenium"> Black Oxygenium
+        </label>
+        <br>
+        <label>
+            <input type="radio" name="source_name" value="cute_ganymede"> Cute Ganymede
+        </label>
+        <br>
+
+        <label for="start-datetime">Start Date and Time:</label>
+        <input type="datetime-local" id="start-datetime" name="start_date" required>
+            
+        <label for="end-datetime">End Date and Time:</label>
+        <input type="datetime-local" id="end-datetime" name="end_date" required>
+    
+        <button type="submit">Fetch Logs</button>
+    </fieldset>
+
+</form>
+
+<!-- Table with logs: -->
+<div class="logtracker-logs-table" id="logtracker-logs-table">
+    <!-- Response from the server will be loaded here -->
+    <p>
+        There will be response after "GET"-request to /logtracker/logs/fetch
+    </p>
+</div>

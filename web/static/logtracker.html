@@ -1,0 +1,18 @@
+<h3>Log Tracker</h3>
+
+<ul class="horizintal-menu">
+    <!-- <a href="#logs">Logs</a></li>
+    <a href="#statistic">Statistic</a></li>
+    <a href="#charts">Charts</a></li> -->
+
+    <a href="#" hx-get="/logtracker/logs"      hx-target="#logtracker-content" hx-swap="innerHTML">Logs</a>
+    <a href="#" hx-get="/logtracker/statistic" hx-target="#logtracker-content" hx-swap="innerHTML">Statistic</a>
+    <a href="#" hx-get="/logtracker/charts"    hx-target="#logtracker-content" hx-swap="innerHTML">Charts</a>
+</ul>
+
+<div class="logtracker-content" id="logtracker-content">
+    <p>
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        DEBUG TEXT
+    </p>
+</div>

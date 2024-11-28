@@ -1,0 +1,20 @@
+/go-server
+│
+├── /static
+│   ├── /css
+│   │   └── styles.css       # CSS files
+│   ├── /html
+│   │   ├── index.html       # HTML files
+│   │   └── about.html
+│   └── /images
+│       └── logo.png         # Image files (if needed)
+│
+├── /cmd
+│   └── server                # Main server application directory
+│       └── main.go          # Entry point for the HTTP server
+│
+├── /pkg                      # Optional: reusable packages
+│   └── handlers              # Custom handlers for routes
+│       └── handlers.go
+│
+└── go.mod                   # Go module file

@@ -1,0 +1,30 @@
+body {
+    display: flex;
+}
+.side-menu {
+    width: 200px; 
+    background: #f4f4f4;
+    padding: 10px;
+}
+.content {
+    flex-grow: 1;
+    padding: 10px;
+}
+
+/* PREPLEXITY */
+.side-menu ul {
+    list-style-type: none; /*Remove default bullet points*/
+    padding: 0; /*Remove default padding*/
+    margin: 0; /*Remove default margin*/
+}
+
+.side-menu a {
+    display: block; /*Change display to block to stack vertically*/
+    padding: 10px; /*Add some padding for better spacing*/
+    text-decoration: none; /*Remove underline from links*/
+    color: #000; /*Set text color*/
+}
+
+.side-menu a:hover {
+    background-color: #f0f0f0; /*Add a hover effect*/
+}

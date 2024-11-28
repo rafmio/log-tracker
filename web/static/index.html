@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- 
+        Most browsers do not treat these as equivalent to real HTTP headers. 
+        The proper way to set CORS headers like Access-Control-Allow-Headers 
+        must be done on the server side, not through HTML meta tags 
+        -->
+        <!-- <meta http-equiv="Access-Control-Allow-Headers" content="hx-request"> -->
+        <title>rafmio</title>
+        <script src="https://unpkg.com/htmx.org@2.0.2"></script>
+        <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    </head>
+
+    <body>
+        
+        <div class="side-menu">
+            <h3>rafmio</h3>
+            <ul>
+                <a href="#" hx-get="/about"      hx-target="#content" hx-swap="innerHTML">About me</a>
+                <a href="#" hx-get="/logtracker" hx-target="#content" hx-swap="innerHTML">Log Tracker</a>
+                <a href="#" hx-get="/budgeting"  hx-target="#content" hx-swap="innerHTML">Budgeting</a>
+                <a href="#" hx-get="/orders"     hx-target="#content" hx-swap="innerHTML">Orders</a>
+            </ul>
+        </div>
+        
+        <div class="content" id="content" hx-get="/about" hx-trigger="load" hx-swap="innerHTML">
+            <!-- There will be content from about.html by default -->
+        </div>
+    </body>
+</html>
