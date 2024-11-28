@@ -19,19 +19,19 @@ func main() {
 	mux := http.NewServeMux()
 	cmd.RegisterRoutes(mux)
 
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	// http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "static/index.html")
-	})
+	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	// 	http.ServeFile(w, r, "static/index.html")
+	// })
 
-	http.HandleFunc("/about", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "static/about.html")
-	})
+	// http.HandleFunc("/about", func(w http.ResponseWriter, r *http.Request) {
+	// 	http.ServeFile(w, r, "static/about.html")
+	// })
 
-	http.HandleFunc("/logtracker", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "static/logtracker.html")
-	})
+	// http.HandleFunc("/logtracker", func(w http.ResponseWriter, r *http.Request) {
+	// 	http.ServeFile(w, r, "static/logtracker.html")
+	// })
 
 	http.HandleFunc("/budgeting", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "static/budgeting.html")
